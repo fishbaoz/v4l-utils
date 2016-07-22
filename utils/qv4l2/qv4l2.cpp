@@ -76,6 +76,7 @@ static QAction *addSubMenuItem(QActionGroup *grp, QMenu *menu, const QString &te
 
 ApplicationWindow::ApplicationWindow() :
 	m_capture(NULL),
+	m_new_window_show(false),
 	m_pxw(25),
 	m_minWidth(175),
 	m_vMargin(15),
@@ -300,8 +301,18 @@ ApplicationWindow::ApplicationWindow() :
 
 	statusBar()->showMessage("Ready", 2000);
 
+	m_cenWidget = new QWidget;
+	m_hboxlayout = new QHBoxLayout;
 	m_tabs = new QTabWidget;
-	setCentralWidget(m_tabs);
+	m_hsplitter = new QSplitter;
+	#if 0
+	m_cenWidget->setLayout(m_hboxlayout);
+	m_hboxlayout->addWidget(m_tabs);
+	setCentralWidget(m_cenWidget);
+	#else
+	m_hsplitter->addWidget(m_tabs);
+	setCentralWidget(m_hsplitter);
+	#endif
 }
 
 
@@ -1426,8 +1437,13 @@ void ApplicationWindow::capStart(bool start)
 		m_capture->setWindowSize(QSize(m_vbiWidth, m_vbiHeight));
 		m_capture->setFrame(m_capImage->width(), m_capImage->height(),
 				    m_capDestFormat.fmt.pix.pixelformat, m_capImage->bits(), NULL, NULL);
-		if (showFrames())
-			m_capture->show();
+		if (showFrames()) {
+			if (m_new_window_show)
+				m_capture->show();
+			else
+				//m_hboxlayout->addWidget(m_capture);
+				m_hsplitter->addWidget(m_capture);
+		}
 
 		statusBar()->showMessage("No frame");
 		if (startStreaming()) {
@@ -1457,8 +1473,13 @@ void ApplicationWindow::capStart(bool start)
 		m_capture->setWindowSize(QSize(SDR_WIDTH, SDR_HEIGHT));
 		m_capture->setFrame(m_capImage->width(), m_capImage->height(),
 				    m_capDestFormat.fmt.pix.pixelformat, m_capImage->bits(), NULL, NULL);
-		if (showFrames())
-			m_capture->show();
+		if (showFrames()) {
+			if (m_new_window_show)
+				m_capture->show();
+			else
+				//m_hboxlayout->addWidget(m_capture);
+				m_hsplitter->addWidget(m_capture);
+		}
 
 		statusBar()->showMessage("No frame");
 		if (startStreaming()) {
@@ -1532,8 +1553,13 @@ void ApplicationWindow::capStart(bool start)
 			    pixfmt, m_capImage->bits(), NULL, NULL);
 	m_capture->makeFullScreen(m_makeFullScreenAct->isChecked());
 	updateColorspace();
-	if (showFrames())
-		m_capture->show();
+	if (showFrames()) {
+		if (m_new_window_show)
+			m_capture->show();
+		else
+			//m_hboxlayout->addWidget(m_capture);
+			m_hsplitter->addWidget(m_capture);
+	}
 
 	statusBar()->showMessage("No frame");
 	if (startStreaming()) {

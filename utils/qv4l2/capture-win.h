@@ -26,6 +26,8 @@
 #include <QShortcut>
 #include <QLabel>
 #include <QPushButton>
+#include <QSplitter>
+#include <QVBoxLayout>
 #include <QMenu>
 
 enum CropMethod {

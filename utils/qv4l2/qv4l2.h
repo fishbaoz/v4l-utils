@@ -23,6 +23,8 @@
 #include <config.h>
 
 #include <QMainWindow>
+#include <QHBoxLayout>
+#include <QSplitter>
 #include <QTabWidget>
 #include <QSignalMapper>
 #include <QLabel>
@@ -130,6 +132,7 @@ private:
 	int m_overrideXferFunc;
 	int m_overrideYCbCrEnc;
 	int m_overrideQuantization;
+	bool m_new_window_show;
 
 private slots:
 	void capStart(bool);
@@ -262,6 +265,9 @@ private:
 	const int m_hMargin;
 	int m_maxw[4];
 	int m_increment;
+	QHBoxLayout *m_hboxlayout;
+	QSplitter *m_hsplitter;
+	QWidget *m_cenWidget;
 	GeneralTab *m_genTab;
 	VbiTab *m_vbiTab;
 	QMenu *m_capMenu;
