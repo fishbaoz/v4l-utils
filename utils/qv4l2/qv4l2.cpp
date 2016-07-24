@@ -55,6 +55,7 @@ extern "C" {
 
 #include "qv4l2.h"
 #include "general-tab.h"
+#include "seq-pat-tab.h"
 #include "vbi-tab.h"
 #include "capture-win.h"
 #include "capture-win-qt.h"
@@ -406,6 +407,10 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 	connect(m_genTab, SIGNAL(clearBuffers()), this, SLOT(clearBuffers()));
 	m_tabs->addTab(w, "General Settings");
 
+	w = new QWidget(m_tabs);
+	m_seqpatTab = new SeqPatTab(device, this, 4, w);
+	m_tabs->addTab(w, "Sequence && Pattern");
+	
 	if (has_vid_out()) {
 		addTpgTab(m_minWidth);
 		tpg_init(&m_tpg, 640, 360);

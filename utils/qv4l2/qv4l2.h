@@ -49,6 +49,7 @@ class QComboBox;
 class QSpinBox;
 class QCheckBox;
 class GeneralTab;
+class SeqPatTab;
 class VbiTab;
 class QCloseEvent;
 class CaptureWin;
@@ -269,6 +270,7 @@ private:
 	QSplitter *m_hsplitter;
 	QWidget *m_cenWidget;
 	GeneralTab *m_genTab;
+	SeqPatTab *m_seqpatTab;
 	VbiTab *m_vbiTab;
 	QMenu *m_capMenu;
 	QAction *m_capStartAct;
