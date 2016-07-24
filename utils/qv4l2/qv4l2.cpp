@@ -100,6 +100,9 @@ ApplicationWindow::ApplicationWindow() :
 	m_tpgYCbCrEnc = 0;
 	m_tpgQuantRange = 0;
 	m_tpgLimRGBRange = NULL;
+
+	m_pattern = new PatternWin(this);
+	m_pattern->showFullScreen();
 	for (unsigned b = 0; b < sizeof(m_clear); b++)
 		m_clear[b] = false;
 

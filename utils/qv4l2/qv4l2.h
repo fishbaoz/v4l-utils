@@ -44,6 +44,7 @@ extern "C" {
 #include "cv4l-helpers.h"
 #include "raw2sliced.h"
 #include "capture-win.h"
+#include "pattern-win.h"
 
 class QComboBox;
 class QSpinBox;
@@ -53,6 +54,7 @@ class SeqPatTab;
 class VbiTab;
 class QCloseEvent;
 class CaptureWin;
+class PatternWin;
 
 typedef std::vector<unsigned> ClassIDVec;
 typedef std::map<unsigned, ClassIDVec> ClassMap;
@@ -109,6 +111,7 @@ public:
 	// capturing
 private:
 	CaptureWin *m_capture;
+	PatternWin *m_pattern;
 
 	bool startStreaming();
 	void stopStreaming();

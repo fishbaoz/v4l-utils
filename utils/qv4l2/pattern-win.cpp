@@ -76,7 +76,7 @@ PatternWin::PatternWin(ApplicationWindow *aw) :
 	QDesktopWidget *desktop = QApplication::desktop();
 	QImage* img=new QImage;
 
-	if(! ( img->load("mode1.png") ) ) //加载图像
+	if(! ( img->load("mode1.png") ) ) //
 	{
 		qDebug("load image failed\n");
 		delete img;
