@@ -101,20 +101,27 @@ ApplicationWindow::ApplicationWindow() :
 	m_tpgYCbCrEnc = 0;
 	m_tpgQuantRange = 0;
 	m_tpgLimRGBRange = NULL;
-
+#define ONE_SCREEN_TEST 0
 //	m_pattern = new PatternWin(this);
 //	m_pattern->showFullScreen();
 	QDesktopWidget *desktop = QApplication::desktop();
 	int screen_count = desktop->screenCount();
 	int prim_screen = desktop->primaryScreen();
 	// TODO: remove
-	//screen_count = 3;
+	#if ONE_SCREEN_TEST
+	screen_count = 3;
+	#endif
 //	qDebug("screen count %d\n", screen_count);
 	int pos=0;
 	for (int i=0; i<screen_count; i++) {
 		m_pattern[i] = new PatternWin(this, desktop, i); // TODO
 		//m_pattern[i]->showFullScreen();
+		#if ONE_SCREEN_TEST
+		m_pattern[i]->move(0, 0);
+		#else
 		m_pattern[i]->move(pos, 0);
+		#endif
+		m_pattern[i]->move(0, 0);
 		if (i != 0) m_pattern[i]->show();
 		pos += m_pattern[i]->screen_rect.width();
 	}
