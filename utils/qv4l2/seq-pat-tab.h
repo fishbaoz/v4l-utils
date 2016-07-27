@@ -53,7 +53,7 @@ class SeqPatTab: public QGridLayout
 	Q_OBJECT
 
 public:
-	SeqPatTab(const QString &device, cv4l_fd *fd, int n, QWidget *parent = 0);
+	SeqPatTab(const QString &device, cv4l_fd *fd, ApplicationWindow *aw, int n, QWidget *parent = 0);
 	virtual ~SeqPatTab() {}
 
 	CapMethod capMethod();
@@ -101,6 +101,7 @@ signals:
 private slots:
 	void inputChanged(int);
 	void seqOutputChanged(int);
+	void patOutputChanged(int);
 	void outputChanged(int);
 	void inputAudioChanged(int);
 	void outputAudioChanged(int);
@@ -135,7 +136,7 @@ private slots:
 
 private:
 	void SequenceSection(v4l2_input vin);
-	void outputSection(v4l2_output vout);
+	void PatternSection(v4l2_output vout);
 	void audioSection(v4l2_audio vaudio, v4l2_audioout vaudout);
 	void formatSection(v4l2_fmtdesc fmt); 
 	void cropSection(); 
@@ -290,6 +291,7 @@ private:
 
 
 	cv4l_fd *m_fd;
+	ApplicationWindow *m_appWin;
 	int m_row;
 	int m_col;
 	int m_cols;
@@ -333,6 +335,7 @@ private:
 	QComboBox *m_seqOutput;
 	QComboBox *m_videoInput;
 	QComboBox *m_videoOutput;
+	QComboBox *m_patternOutput;
 	QComboBox *m_audioInput;
 	QComboBox *m_audioOutput;
 	QComboBox *m_tvStandard;

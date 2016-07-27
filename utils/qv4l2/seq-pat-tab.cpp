@@ -57,9 +57,10 @@ static QString pixfmt2s(unsigned id)
 	return pixfmt;
 }
 
-SeqPatTab::SeqPatTab(const QString &device, cv4l_fd *fd, int n, QWidget *parent) :
+SeqPatTab::SeqPatTab(const QString &device, cv4l_fd *fd, ApplicationWindow *aw, int n, QWidget *parent) :
 	QGridLayout(parent),
 	m_fd(fd),
+	m_appWin(aw),
 	m_row(0),
 	m_col(0),
 	m_cols(n),
@@ -188,7 +189,7 @@ SeqPatTab::SeqPatTab(const QString &device, cv4l_fd *fd, int n, QWidget *parent)
 
 //	if (m_modulator.capability || (!isRadio() && !enum_output(vout, true))) {
 		addTitle("Output Settings");
-		outputSection(vout);
+		PatternSection(vout);
 //	}
 
 //	if (hasAlsaAudio()) {
@@ -347,7 +348,7 @@ void SeqPatTab::SequenceSection(v4l2_input vin)
 	addLabel("Sequence");
 	m_seqOutput = new QComboBox(parentWidget());
 	while ((pos = rx.indexIn(xrandrOutput, pos)) != -1) {
-		qDebug("%s", qPrintable(rx.cap(0).simplified()));
+//		qDebug("%s", qPrintable(rx.cap(0).simplified()));
 		m_seqOutput->addItem(qPrintable(rx.cap(0).simplified()));
 		pos += rx.matchedLength();
 
@@ -541,27 +542,25 @@ void SeqPatTab::SequenceSection(v4l2_input vin)
 	m_row++;
 }
 
-void SeqPatTab::outputSection(v4l2_output vout)
+void SeqPatTab::PatternSection(v4l2_output vout)
 {
 	bool needsStd = false;
 	bool needsTimings = false;
 
-	if (!isRadio() && !enum_output(vout, true)) {
+	//if (!isRadio() && !enum_output(vout, true)) {
 		addLabel("Output");
-		m_videoOutput = new QComboBox(parentWidget());
-		do {
-			m_videoOutput->addItem((char *)vout.name);
-			if (vout.capabilities & V4L2_OUT_CAP_STD)
-				needsStd = true;
-			if (vout.capabilities & V4L2_OUT_CAP_DV_TIMINGS)
-				needsTimings = true;
-		} while (!enum_output(vout));
-		addWidget(m_videoOutput);
-		connect(m_videoOutput, SIGNAL(activated(int)), SLOT(outputChanged(int)));
-		updateVideoOutput();
+		m_patternOutput = new QComboBox(parentWidget());
+//		do {
+			m_patternOutput->addItem("mode1");
+			m_patternOutput->addItem("mode2");
+			m_patternOutput->addItem("mode3");
+//		} while (!enum_output(vout));
+		addWidget(m_patternOutput);
+		connect(m_patternOutput, SIGNAL(activated(int)), SLOT(patOutputChanged(int)));
+		//updateVideoOutput();
 		m_row++;
 		m_col = 0;
-	}
+//	}
 
 	QWidget *wStd = new QWidget();
 	QGridLayout *m_stdRow = new QGridLayout(wStd);
@@ -657,6 +656,7 @@ void SeqPatTab::outputSection(v4l2_output vout)
 
 void SeqPatTab::audioSection(v4l2_audio vaudio, v4l2_audioout vaudout)
 {
+	#if 0
 	if (hasAlsaAudio() && !m_isOutput) {
 		if (createAudioDeviceList()) {
 			addLabel("Audio Input Device");
@@ -741,6 +741,7 @@ void SeqPatTab::audioSection(v4l2_audio vaudio, v4l2_audioout vaudout)
 		connect(m_audioOutput, SIGNAL(activated(int)), SLOT(outputAudioChanged(int)));
 		updateAudioOutput();
 	}
+	#endif
 }
 
 void SeqPatTab::formatSection(v4l2_fmtdesc fmt)
@@ -1290,8 +1291,15 @@ void SeqPatTab::seqOutputChanged(int input)
 {
 	s_input((__u32)input);
 
-	qDebug("seq output %d, %s", input, qPrintable(m_seqOutput->currentText()));
+//	qDebug("seq output %d, %s", input, qPrintable(m_seqOutput->currentText()));
 }
+
+void SeqPatTab::patOutputChanged(int mode)
+{
+//	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
+	m_appWin->m_pattern[1]->updatePattern(mode+1);
+}
+
 
 void SeqPatTab::outputChanged(int output)
 {
@@ -2349,6 +2357,7 @@ double SeqPatTab::getPixelAspectRatio()
 
 void SeqPatTab::updateFrameInterval()
 {
+	#if 0
 	v4l2_frmivalenum frmival = { 0 };
 	v4l2_fract curr = { 1, 1 };
 	bool curr_ok, ok;
@@ -2375,6 +2384,7 @@ void SeqPatTab::updateFrameInterval()
                         }
 		} while (!enum_frameintervals(frmival));
 	}
+	#endif
 }
 
 bool SeqPatTab::get_interval(struct v4l2_fract &interval)

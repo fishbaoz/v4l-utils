@@ -45,6 +45,7 @@ extern "C" {
 #include <QThread>
 #include <QCloseEvent>
 #include <QInputDialog>
+#include <QDesktopWidget>
 
 #include <assert.h>
 #include <sys/mman.h>
@@ -101,8 +102,23 @@ ApplicationWindow::ApplicationWindow() :
 	m_tpgQuantRange = 0;
 	m_tpgLimRGBRange = NULL;
 
-	m_pattern = new PatternWin(this);
-	m_pattern->showFullScreen();
+//	m_pattern = new PatternWin(this);
+//	m_pattern->showFullScreen();
+	QDesktopWidget *desktop = QApplication::desktop();
+	int screen_count = desktop->screenCount();
+	int prim_screen = desktop->primaryScreen();
+	// TODO: remove
+	//screen_count = 3;
+//	qDebug("screen count %d\n", screen_count);
+	int pos=0;
+	for (int i=0; i<screen_count; i++) {
+		m_pattern[i] = new PatternWin(this, desktop, i); // TODO
+		//m_pattern[i]->showFullScreen();
+		m_pattern[i]->move(pos, 0);
+		if (i != 0) m_pattern[i]->show();
+		pos += m_pattern[i]->screen_rect.width();
+	}
+
 	for (unsigned b = 0; b < sizeof(m_clear); b++)
 		m_clear[b] = false;
 
@@ -411,7 +427,7 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 	m_tabs->addTab(w, "General Settings");
 
 	w = new QWidget(m_tabs);
-	m_seqpatTab = new SeqPatTab(device, this, 4, w);
+	m_seqpatTab = new SeqPatTab(device, this, this, 4, w);
 	m_tabs->addTab(w, "Sequence && Pattern");
 	
 	if (has_vid_out()) {

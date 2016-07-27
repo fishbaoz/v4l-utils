@@ -29,6 +29,7 @@
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QMenu>
+#include <QDesktopWidget>
 
 
 class ApplicationWindow;
@@ -39,8 +40,10 @@ class PatternWin : public QWidget
 
 public:
 	PatternWin(ApplicationWindow *aw);
+	PatternWin(ApplicationWindow *aw, QDesktopWidget *d, int screen_num);
 	~PatternWin();
-
+	void updatePattern(int mode);
+	QRect screen_rect;
 
 public slots:
 //	void resetSize();
@@ -116,5 +119,8 @@ private:
 //	QShortcut *m_hotkeyToggleFullscreen;
 	QVBoxLayout *m_vboxLayout;
 	unsigned m_vboxSpacing;
+	QDesktopWidget *desktop;
+
+	int screen_num;
 };
 #endif

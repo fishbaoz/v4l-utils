@@ -107,11 +107,11 @@ private slots:
 
 public:
 	void setDevice(const QString &device, bool rawOpen);
+	PatternWin *m_pattern[3];
 
 	// capturing
 private:
 	CaptureWin *m_capture;
-	PatternWin *m_pattern;
 
 	bool startStreaming();
 	void stopStreaming();
