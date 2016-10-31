@@ -210,6 +210,7 @@ public:
 	QMenu *m_overrideXferFuncMenu;
 	QMenu *m_overrideYCbCrEncMenu;
 	QMenu *m_overrideQuantizationMenu;
+	QAction *m_capStartAct;
 
 private:
 	void addWidget(QGridLayout *grid, QWidget *w, Qt::Alignment align = Qt::AlignLeft);
@@ -276,7 +277,6 @@ private:
 	SeqPatTab *m_seqpatTab;
 	VbiTab *m_vbiTab;
 	QMenu *m_capMenu;
-	QAction *m_capStartAct;
 	QAction *m_capStepAct;
 	QAction *m_saveRawAct;
 	QAction *m_useGLAct;

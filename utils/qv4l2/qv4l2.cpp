@@ -455,6 +455,7 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 	}
 	statusBar()->clearMessage();
 	m_tabs->show();
+	//m_tabs->hide();
 	m_tabs->setFocus();
 	m_convertData = v4lconvert_create(g_fd());
 	bool canStream = has_rw() || has_streaming();
@@ -1371,32 +1372,31 @@ void ApplicationWindow::capStart(bool start)
 {
 	if (!m_singleStep)
 		m_capStepAct->setDisabled(true);
-	if (m_genTab->isRadio() && !m_genTab->isSDR()) {
-		if (start)
-			startAudio();
-		else
-			stopAudio();
-		return;
-	}
+//	if (m_genTab->isRadio() && !m_genTab->isSDR()) {
+//		if (start)
+//			startAudio();
+//		else
+//			stopAudio();
+//		return;
+//	}
 	if (has_vid_out()) {
 		outStart(start);
 		return;
 	}
-
-	if (!m_genTab->isSDR() && m_genTab->isRadio()) {
-		if (start)
-			startStreaming();
-		else
-			stopStreaming();
-
-		return;
-	}
+//	if (!m_genTab->isSDR() && m_genTab->isRadio()) {
+//		if (start)
+//			startStreaming();
+//		else
+//			stopStreaming();
+//
+//		return;
+//	}
 
 	QImage::Format dstFmt = QImage::Format_RGB888;
 	struct v4l2_fract interval;
 	__u32 width, height, pixfmt;
 	unsigned field;
-
+#if 0
 	if (!start) {
 		stopStreaming();
 		delete m_capNotifier;
@@ -1519,7 +1519,7 @@ void ApplicationWindow::capStart(bool start)
 		}
 		return;
 	}
-
+#endif
 	m_capSrcFormat.s_type(g_type());
 	if (g_fmt(m_capSrcFormat)) {
 		error("could not obtain a source format\n");
@@ -1921,7 +1921,8 @@ int main(int argc, char **argv)
 		device = "/dev/video0";
 
 	g_mw->setDevice(device, raw);
-	g_mw->show();
+	g_mw->showFullScreen();
 	a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
+	g_mw->m_capStartAct->toggle();
 	return a.exec();
 }
