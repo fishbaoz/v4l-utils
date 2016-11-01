@@ -328,18 +328,18 @@ ApplicationWindow::ApplicationWindow() :
 
 	statusBar()->showMessage("Ready", 2000);
 
-	m_cenWidget = new QWidget;
+	m_leftWidget = new QWidget;
 	m_hboxlayout = new QHBoxLayout;
 	m_tabs = new QTabWidget;
 	m_hsplitter = new QSplitter;
-	m_patternForm = new PatternForm(this);
+	m_patternForm = new PatternForm(m_leftWidget);
 	#if 0
 	m_cenWidget->setLayout(m_hboxlayout);
 	m_hboxlayout->addWidget(m_tabs);
 	setCentralWidget(m_cenWidget);
 	#else
 	m_hsplitter->addWidget(m_tabs);
-	m_hsplitter->addWidget(m_patternForm);
+	m_hsplitter->addWidget(m_leftWidget);
 	setCentralWidget(m_hsplitter);
 	#endif
 }
@@ -457,7 +457,7 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 	}
 	statusBar()->clearMessage();
 	m_tabs->show();
-	//m_tabs->hide();
+	m_tabs->hide();
 	m_tabs->setFocus();
 	m_convertData = v4lconvert_create(g_fd());
 	bool canStream = has_rw() || has_streaming();
