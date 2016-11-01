@@ -121,7 +121,7 @@ ApplicationWindow::ApplicationWindow() :
 		#else
 		m_pattern[i]->move(pos, 0);
 		#endif
-		m_pattern[i]->move(0, 0);
+		//m_pattern[i]->move(0, 0);
 		if (i != 0) m_pattern[i]->show();
 		pos += m_pattern[i]->screen_rect.width();
 	}
