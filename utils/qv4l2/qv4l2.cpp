@@ -1398,7 +1398,7 @@ void ApplicationWindow::capStart(bool start)
 	struct v4l2_fract interval;
 	__u32 width, height, pixfmt;
 	unsigned field;
-#if 0
+#if 1
 	if (!start) {
 		stopStreaming();
 		delete m_capNotifier;
