@@ -2,7 +2,7 @@ bin_PROGRAMS = qv4l2
 man_MANS = qv4l2.1
 
 qv4l2_SOURCES = qv4l2.cpp general-tab.cpp seq-pat-tab.cpp ctrl-tab.cpp vbi-tab.cpp capture-win.cpp pattern-win.cpp tpg-tab.cpp \
-  capture-win-qt.cpp capture-win-qt.h capture-win-gl.cpp capture-win-gl.h alsa_stream.c alsa_stream.h \
+  capture-win-qt.cpp capture-win-qt.h capture-win-gl.cpp capture-win-gl.h alsa_stream.c alsa_stream.h ui_dvictrl.cpp \
   raw2sliced.cpp qv4l2.h capture-win.h pattern-win.h general-tab.h seq-pat-tab.h vbi-tab.h raw2sliced.h \
   v4l2-tpg-core.c v4l2-tpg-colors.c
 nodist_qv4l2_SOURCES = moc_qv4l2.cpp moc_general-tab.cpp moc_seq-pat-tab.cpp moc_capture-win.cpp moc_pattern-win.cpp moc_vbi-tab.cpp qrc_qv4l2.cpp moc_ui_dvictrl.cpp
