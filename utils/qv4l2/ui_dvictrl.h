@@ -46,10 +46,15 @@ private:
     QLabel *label;
     QLabel *label_2;
 
+    ApplicationWindow *m_appWin;
+
 public:
 
-    PatternForm(QWidget *aw);
+    PatternForm(QWidget *parent, ApplicationWindow *aw);
     ~PatternForm();
+
+private slots:
+    void patOutputChanged(int);
 };
 
 

@@ -332,7 +332,7 @@ ApplicationWindow::ApplicationWindow() :
 	m_hboxlayout = new QHBoxLayout;
 	m_tabs = new QTabWidget;
 	m_hsplitter = new QSplitter;
-	m_patternForm = new PatternForm(m_leftWidget);
+	m_patternForm = new PatternForm(m_leftWidget, this);
 	#if 0
 	m_cenWidget->setLayout(m_hboxlayout);
 	m_hboxlayout->addWidget(m_tabs);

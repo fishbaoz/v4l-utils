@@ -8,9 +8,10 @@
 #include "ui_dvictrl.h"
 #include <QApplication>
 
-PatternForm::PatternForm(QWidget *aw)
+PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
+	m_appWin(aw)
 {
-	sequencetabWidget = new QTabWidget(aw);
+	sequencetabWidget = new QTabWidget(parent);
         sequencetabWidget->setObjectName(QString::fromUtf8("sequencetabWidget"));
         sequencetabWidget->setGeometry(QRect(50, 50, 241, 131));
         dvi1_seqtab = new QWidget();
@@ -43,7 +44,7 @@ PatternForm::PatternForm(QWidget *aw)
         refreshrate2_comboBox->setObjectName(QString::fromUtf8("refreshrate2_comboBox"));
         refreshrate2_comboBox->setGeometry(QRect(110, 60, 85, 27));
         sequencetabWidget->addTab(dvi2_seqtab, QString());
-        modetabWidget = new QTabWidget(aw);
+        modetabWidget = new QTabWidget(parent);
         modetabWidget->setObjectName(QString::fromUtf8("modetabWidget"));
         modetabWidget->setGeometry(QRect(50, 240, 241, 131));
         dvi1_modetab = new QWidget();
@@ -64,14 +65,14 @@ PatternForm::PatternForm(QWidget *aw)
         mode2_comboBox->setObjectName(QString::fromUtf8("mode2_comboBox"));
         mode2_comboBox->setGeometry(QRect(90, 30, 85, 27));
         modetabWidget->addTab(dvi2_modetab, QString());
-        label = new QLabel(aw);
+        label = new QLabel(parent);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(50, 200, 68, 17));
-        label_2 = new QLabel(aw);
+        label_2 = new QLabel(parent);
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(60, 10, 81, 17));
 
-		/*retranslate UI */
+	/*retranslate UI */
         label_3->setText(QApplication::translate("PatternForm", "resolution", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("PatternForm", "refresh rate", 0, QApplication::UnicodeUTF8));
         sequencetabWidget->setTabText(sequencetabWidget->indexOf(dvi1_seqtab), QApplication::translate("PatternForm", "dvi1", 0, QApplication::UnicodeUTF8));
@@ -89,9 +90,24 @@ PatternForm::PatternForm(QWidget *aw)
         sequencetabWidget->setCurrentIndex(0);
         modetabWidget->setCurrentIndex(1);
 
+	mode1_comboBox->addItem("mode1");
+	mode1_comboBox->addItem("mode2");
+	mode1_comboBox->addItem("mode3");
+	connect(mode1_comboBox, SIGNAL(activated(int)), SLOT(patOutputChanged(int)));
+
+	mode2_comboBox->addItem("mode1");
+	mode2_comboBox->addItem("mode2");
+	mode2_comboBox->addItem("mode3");
+
 }
 
 PatternForm::~PatternForm()
 {
 
+}
+
+void PatternForm::patOutputChanged(int mode)
+{
+//	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
+//	m_appWin->m_pattern[1]->updatePattern(mode+1);
 }
