@@ -5,7 +5,7 @@ qv4l2_SOURCES = qv4l2.cpp general-tab.cpp seq-pat-tab.cpp ctrl-tab.cpp vbi-tab.c
   capture-win-qt.cpp capture-win-qt.h capture-win-gl.cpp capture-win-gl.h alsa_stream.c alsa_stream.h \
   raw2sliced.cpp qv4l2.h capture-win.h pattern-win.h general-tab.h seq-pat-tab.h vbi-tab.h raw2sliced.h \
   v4l2-tpg-core.c v4l2-tpg-colors.c
-nodist_qv4l2_SOURCES = moc_qv4l2.cpp moc_general-tab.cpp moc_seq-pat-tab.cpp moc_capture-win.cpp moc_pattern-win.cpp moc_vbi-tab.cpp qrc_qv4l2.cpp
+nodist_qv4l2_SOURCES = moc_qv4l2.cpp moc_general-tab.cpp moc_seq-pat-tab.cpp moc_capture-win.cpp moc_pattern-win.cpp moc_vbi-tab.cpp qrc_qv4l2.cpp moc_ui_dvictrl.cpp
 qv4l2_LDADD = ../../lib/libv4l2/libv4l2.la ../../lib/libv4lconvert/libv4lconvert.la \
   ../libv4l2util/libv4l2util.la ../libmedia_dev/libmedia_dev.la
 qv4l2_CPPFLAGS = -I../common
@@ -46,6 +46,9 @@ moc_capture-win.cpp: $(srcdir)/capture-win.h
 
 moc_pattern-win.cpp: $(srcdir)/pattern-win.h
 	$(AM_V_GEN)$(MOC) -o $@ $(srcdir)/pattern-win.h
+
+moc_ui_dvictrl.cpp: $(srcdir)/ui_dvictrl.h
+	$(AM_V_GEN)$(MOC) -o $@ $(srcdir)/ui_dvictrl.h
 
 # Call the Qt resource compiler
 qrc_qv4l2.cpp: $(srcdir)/qv4l2.qrc

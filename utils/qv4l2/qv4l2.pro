@@ -30,6 +30,7 @@ HEADERS += vbi-tab.h
 HEADERS += ../v4l2-ctl/v4l2-tpg.h
 HEADERS += ../v4l2-ctl/v4l2-tpg-colors.h
 HEADERS += ../../config.h
+HEADERS += ui_dvictrl.h
 
 SOURCES += capture-win.cpp
 SOURCES += capture-win-gl.cpp
@@ -44,6 +45,7 @@ SOURCES += tpg-tab.cpp
 SOURCES += vbi-tab.cpp
 SOURCES += ../v4l2-ctl/v4l2-tpg-core.c
 SOURCES += ../v4l2-ctl/v4l2-tpg-colors.c
+SOURCES += ui_dvictrl.cpp
 
 LIBS += -L$$PWD/../../lib/libv4l2/.libs -lv4l2
 LIBS += -L$$PWD/../../lib/libv4lconvert/.libs -lv4lconvert

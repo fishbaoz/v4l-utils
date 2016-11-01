@@ -332,12 +332,14 @@ ApplicationWindow::ApplicationWindow() :
 	m_hboxlayout = new QHBoxLayout;
 	m_tabs = new QTabWidget;
 	m_hsplitter = new QSplitter;
+	m_patternForm = new PatternForm(this);
 	#if 0
 	m_cenWidget->setLayout(m_hboxlayout);
 	m_hboxlayout->addWidget(m_tabs);
 	setCentralWidget(m_cenWidget);
 	#else
 	m_hsplitter->addWidget(m_tabs);
+	m_hsplitter->addWidget(m_patternForm);
 	setCentralWidget(m_hsplitter);
 	#endif
 }

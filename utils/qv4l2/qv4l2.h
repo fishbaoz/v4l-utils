@@ -45,6 +45,7 @@ extern "C" {
 #include "raw2sliced.h"
 #include "capture-win.h"
 #include "pattern-win.h"
+#include "ui_dvictrl.h"
 
 class QComboBox;
 class QSpinBox;
@@ -55,6 +56,7 @@ class VbiTab;
 class QCloseEvent;
 class CaptureWin;
 class PatternWin;
+class PatternForm;
 
 typedef std::vector<unsigned> ClassIDVec;
 typedef std::map<unsigned, ClassIDVec> ClassMap;
@@ -275,6 +277,7 @@ private:
 	QWidget *m_cenWidget;
 	GeneralTab *m_genTab;
 	SeqPatTab *m_seqpatTab;
+	PatternForm *m_patternForm;
 	VbiTab *m_vbiTab;
 	QMenu *m_capMenu;
 	QAction *m_capStepAct;
