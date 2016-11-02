@@ -54,7 +54,8 @@ public:
     ~PatternForm();
 
 private slots:
-    void patOutputChanged(int);
+    void patOutput1Changed(int);
+    void patOutput2Changed(int);
 };
 
 

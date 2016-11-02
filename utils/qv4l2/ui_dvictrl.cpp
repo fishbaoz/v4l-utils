@@ -93,12 +93,12 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	mode1_comboBox->addItem("mode1");
 	mode1_comboBox->addItem("mode2");
 	mode1_comboBox->addItem("mode3");
-	connect(mode1_comboBox, SIGNAL(activated(int)), SLOT(patOutputChanged(int)));
+	connect(mode1_comboBox, SIGNAL(activated(int)), SLOT(patOutput1Changed(int)));
 
 	mode2_comboBox->addItem("mode1");
 	mode2_comboBox->addItem("mode2");
 	mode2_comboBox->addItem("mode3");
-
+	connect(mode2_comboBox, SIGNAL(activated(int)), SLOT(patOutput2Changed(int)));
 }
 
 PatternForm::~PatternForm()
@@ -106,8 +106,15 @@ PatternForm::~PatternForm()
 
 }
 
-void PatternForm::patOutputChanged(int mode)
+// TODO: disable the unconnected screen.
+void PatternForm::patOutput1Changed(int mode)
 {
 //	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
-//	m_appWin->m_pattern[1]->updatePattern(mode+1);
+	m_appWin->m_pattern[1]->updatePattern(mode+1);
+}
+
+void PatternForm::patOutput2Changed(int mode)
+{
+//	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
+	m_appWin->m_pattern[2]->updatePattern(mode+1);
 }
