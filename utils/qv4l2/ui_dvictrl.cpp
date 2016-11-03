@@ -7,6 +7,10 @@
 
 #include "ui_dvictrl.h"
 #include <QApplication>
+#include<X11/extensions/Xrandr.h>
+extern "C" {
+#include "xrandr.h"
+}
 
 PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	m_appWin(aw)
@@ -99,6 +103,41 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	mode2_comboBox->addItem("mode2");
 	mode2_comboBox->addItem("mode3");
 	connect(mode2_comboBox, SIGNAL(activated(int)), SLOT(patOutput2Changed(int)));
+#if 0
+	Display *dpy = XOpenDisplay(NULL);
+	Window root = RootWindow(dpy, 0);
+	int num_sizes;
+	XRRScreenSize *xrrs = XRRSizes(dpy, 0, &num_sizes);
+	Rotation original_rotation;
+
+	XRRScreenConfiguration *conf = XRRGetScreenInfo(dpy, root);
+	short original_rate          = XRRConfigCurrentRate(conf);
+	SizeID original_size_id       = XRRConfigCurrentConfiguration(conf, &original_rotation);
+
+	int width=xrrs[original_size_id].width;
+	int height=xrrs[original_size_id].height;
+
+	qDebug("width=%d, height=%d\n", width, height);
+	XCloseDisplay(dpy);
+#endif
+		char *argv[]={"xrandr", "-d", ":0"};
+		char modes_table[3][32][256]={0};
+		memset(modes_table, 0, /* sizeof(modes_table)*/3*32*256   );
+	//	printf("sizeof argv=%d\n", sizeof(argv));
+	xrandr(3, argv, modes_table);
+	char *mode= modes_table[0][0];
+	while (mode[0]) {
+		printf("mode=%s\n", &mode[0]);
+			resolution1_comboBox->addItem((char *)(&mode[0]));
+		mode += 256;
+	}
+	//	for (;;);
+	mode = &(modes_table[2][0][0]);
+	while (mode[0]) {
+		printf("mode=%s\n", &mode[0]);
+				resolution2_comboBox->addItem((char *)(&mode[0]));
+		mode += 256;
+	}
 }
 
 PatternForm::~PatternForm()
