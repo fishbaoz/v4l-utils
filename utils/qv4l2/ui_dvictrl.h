@@ -56,6 +56,12 @@ public:
 private slots:
     void patOutput1Changed(int);
     void patOutput2Changed(int);
+
+    void resolutionOutput1Changed(int);
+    void resolutionOutput2Changed(int);
+
+    void refreshOutput1Changed(int);
+    void refreshOutput2Changed(int);
 };
 
 

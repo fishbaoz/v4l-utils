@@ -2250,7 +2250,7 @@ main (int argc, char **argv)
         int     action_requested = False;
         Rotation    current_rotation;
         XEvent  event;
-        XRRScreenChangeNotifyEvent *sce;    
+        XRRScreenChangeNotifyEvent *sce;
         char          *display_name = NULL;
         int         i;
         SizeID  current_size;
@@ -2278,6 +2278,25 @@ main (int argc, char **argv)
         Bool    current = False;
         Bool    toggle_x = False;
         Bool    toggle_y = False;
+
+	screen = -1;
+	verbose = False;
+	automatic = False;
+	properties = False;
+	grab_server = True;
+	no_primary = False;
+
+	all_outputs = NULL;
+	all_outputs_tail = &all_outputs;
+	fb_width = 0; fb_height = 0;
+	fb_width_mm = 0; fb_height_mm = 0;
+	dpi = 0;
+	dpi_output_name = NULL;
+	dryrun = False;
+	has_1_2 = False;
+	has_1_3 = False;
+	has_1_4 = False;
+
         program_name = argv[0];
         for (i = 1; i < argc; i++) {
 		if (!strcmp ("-display", argv[i]) || !strcmp ("--display", argv[i]) ||
@@ -3064,7 +3083,7 @@ main (int argc, char **argv)
 		 */
 		apply ();
 		XSync (dpy, False);
-		exit (0);
+		return (0);
         }
         if (query_1_2 || (query && has_1_2 && !query_1))
         {
@@ -3329,7 +3348,9 @@ main (int argc, char **argv)
 					jmode = find_mode_by_xid (output_info->modes[j]);
 					printf (" ");
 					printf (" name %-12s", jmode->name);
-					strcpy(ret_modes[output_num][num_retmodes++], jmode->name);
+					#ifdef QT_SHARED
+					if (ret_modes) strcpy(ret_modes[output_num][num_retmodes++], jmode->name);
+					#endif
 					printf("num_retmodes=%d\n", num_retmodes);
 					for (k = j; k < output_info->nmode; k++)
 					{
@@ -3372,7 +3393,9 @@ main (int argc, char **argv)
 					mode_refresh (mode));
 			}
 		}
-		return (0);
+		goto finished;
+		//return (0);
+		exit (0);
         }
         if (list_providers) {
 		int k;
@@ -3566,5 +3589,25 @@ main (int argc, char **argv)
 		}
         }
         XRRFreeScreenConfigInfo(sc);
+finished:
+	printf("close\n");
+	XCloseDisplay(dpy);
         return(ret);
 }
+
+#if 0
+int main()
+{
+	char *argv1[]={"xrandr", "-d", ":0"};
+	char modes_table[3][32][256]={0};
+	memset(modes_table, 0, /* sizeof(modes_table)*/3*32*256   );
+	//	printf("sizeof argv=%d\n", sizeof(argv));
+	xrandr(3, argv1, NULL);
+
+	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", "1920x1080", NULL};
+  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	//strcpy(argv[4], qPrintable(resolution1_comboBox->currentText()));
+	xrandr(7, argv, NULL);
+
+}
+#endif

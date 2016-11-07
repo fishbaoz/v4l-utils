@@ -131,13 +131,26 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 			resolution1_comboBox->addItem((char *)(&mode[0]));
 		mode += 256;
 	}
+	connect(resolution1_comboBox, SIGNAL(activated(int)), SLOT(resolutionOutput1Changed(int)));
+
 	//	for (;;);
 	mode = &(modes_table[2][0][0]);
 	while (mode[0]) {
 		printf("mode=%s\n", &mode[0]);
-				resolution2_comboBox->addItem((char *)(&mode[0]));
+		resolution2_comboBox->addItem((char *)(&mode[0]));
 		mode += 256;
 	}
+	connect(resolution2_comboBox, SIGNAL(activated(int)), SLOT(resolutionOutput2Changed(int)));
+
+	refreshrate1_comboBox->addItem("50");
+	refreshrate1_comboBox->addItem("60");
+	refreshrate1_comboBox->addItem("70");
+	connect(refreshrate1_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput1Changed(int)));
+
+	refreshrate2_comboBox->addItem("50");
+	refreshrate2_comboBox->addItem("60");
+	refreshrate2_comboBox->addItem("70");
+	connect(refreshrate2_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput2Changed(int)));
 }
 
 PatternForm::~PatternForm()
@@ -156,4 +169,45 @@ void PatternForm::patOutput2Changed(int mode)
 {
 //	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
 	m_appWin->m_pattern[2]->updatePattern(mode+1);
+}
+
+void PatternForm::resolutionOutput1Changed(int mode)
+{
+//	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
+//	m_appWin->m_pattern[1]->updatePattern(mode+1);
+	qDebug("resolution=%s\n", qPrintable(resolution1_comboBox->currentText()));
+	char dest_mode[10]="1920x1080";
+	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
+  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	strcpy(dest_mode, qPrintable(resolution1_comboBox->currentText()));
+	xrandr(7, argv, NULL);
+}
+
+void PatternForm::resolutionOutput2Changed(int mode)
+{
+	qDebug("resolution=%s\n", qPrintable(resolution2_comboBox->currentText()));
+	char dest_mode[10]="1920x1080";
+	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
+  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	strcpy(dest_mode, qPrintable(resolution2_comboBox->currentText()));
+	xrandr(7, argv, NULL);
+}
+
+void PatternForm::refreshOutput1Changed(int rate)
+{
+	char dest_rate[10]="60";
+	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--rate", dest_rate, NULL};
+  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	strcpy(dest_rate, qPrintable(refreshrate1_comboBox->currentText()));
+	xrandr(7, argv, NULL);
+
+}
+
+void PatternForm::refreshOutput2Changed(int rate)
+{
+	char dest_rate[10]="60";
+	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--rate", dest_rate, NULL};
+  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	strcpy(dest_rate, qPrintable(refreshrate2_comboBox->currentText()));
+	xrandr(7, argv, NULL);
 }
