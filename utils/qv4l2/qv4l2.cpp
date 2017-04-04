@@ -1507,6 +1507,7 @@ void ApplicationWindow::capStart(bool start)
 		field = m_capDestFormat.g_field();
 	}
 
+	printf("pixfmt=%d\n", pixfmt);
 	// Ensure that the initial image is large enough for native 32 bit per pixel formats
 	switch (pixfmt) {
 	case V4L2_PIX_FMT_RGB32:
@@ -1521,6 +1522,8 @@ void ApplicationWindow::capStart(bool start)
 		dstFmt = QImage::Format_ARGB32;
 		break;
 	}
+	printf("dstfmt=%d\n", dstFmt);
+
 	m_capImage = new QImage(width, height, dstFmt);
 	m_capImage->fill(0);
 	

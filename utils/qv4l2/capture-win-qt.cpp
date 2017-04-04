@@ -19,6 +19,41 @@
 
 #include "capture-win-qt.h"
 
+extern "C"
+{
+#include "libavutil/avstring.h"
+//#include "colorspace.h"
+#include "libavutil/mathematics.h"
+#include "libavutil/pixdesc.h"
+#include "libavutil/imgutils.h"
+#include "libavutil/dict.h"
+#include "libavutil/parseutils.h"
+#include "libavutil/samplefmt.h"
+#include "libavutil/avassert.h"
+#include "libavutil/time.h"
+#include "libavformat/avformat.h"
+#include "libavdevice/avdevice.h"
+#include "libswscale/swscale.h"
+#include "libavutil/opt.h"
+#include "libavcodec/avfft.h"
+#include "libswresample/swresample.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_thread.h"
+}
+
+#include "opencv2/opencv.hpp"
+
+using namespace cv;
+using namespace std;
+#include "dehaze_core.h"
+
+Mat M;
+Mat M_max;
+Mat M_ave;
+Mat L;
+Mat dst;
+double m_av, A;
+
 CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	CaptureWin(aw),
 	m_image(new QImage(0, 0, QImage::Format_Invalid)),
@@ -74,6 +109,17 @@ void CaptureWinQt::setRenderFrame()
 	paintFrame();
 }
 
+int dehaze_core(Mat &src, unsigned char *data)
+{
+	getM(M, M_max, src, m_av);
+	getAveM(M_ave, M, r);
+	getL(L, M, M_ave, eps, m_av);
+	A = GetA(M_max, M_ave);
+	dehaze(data, src, L, A);
+
+	return 0;
+}
+
 void CaptureWinQt::paintFrame()
 {
 	if (m_crop.updated) {
@@ -101,6 +147,10 @@ void CaptureWinQt::paintFrame()
 
 	unsigned char *data = (m_data == NULL) ? m_image->bits() : m_data;
 
+	//width = 640, height=480
+	printf("m_image->depth=%d, bytecount=%d\n", m_image->depth(), m_image->byteCount());
+	Mat src(m_image->height(), m_image->width(), CV_8UC3, data);
+	dehaze_core(src, data);
 	QImage displayFrame(&data[m_cropOffset],
 			    m_crop.size.width(), m_crop.size.height(),
 			    m_image->width() * (m_image->depth() / 8),
