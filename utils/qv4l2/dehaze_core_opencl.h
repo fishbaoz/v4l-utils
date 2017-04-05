@@ -17,22 +17,22 @@ typedef cl_kernel			Kernel;
 typedef cl_mem				Mem;
 
 typedef struct _Context
-{	
-	cl_context	context;	
-	Platform	platform;	
+{
+	cl_context	context;
+	Platform	platform;
 	Device		device;
 }Context;
 
 
-#define TRUE	1
-#define FALSE	0
+//#define TRUE	1
+//#define FALSE	0
 #define CheckErr(err, str) (_checkErr((err), (str), __FILE__, __LINE__))
 void	_checkErr(cl_int err, const char *str, const char *file, const unsigned long line);
 
 typedef enum _DEVICE_TYPE
-{	
-	CPU = CL_DEVICE_TYPE_CPU,	
-	GPU = CL_DEVICE_TYPE_GPU,	
+{
+	CPU = CL_DEVICE_TYPE_CPU,
+	GPU = CL_DEVICE_TYPE_GPU,
 	ALL = CL_DEVICE_TYPE_ALL,
 }DEVICE_TYPE;
 void CL_CALLBACK contextCallback(const char *errinfo, const void *private_info, size_t cb, void *user_data);
@@ -49,7 +49,7 @@ cl_int ExecuteKernel(CommandQueue *commandqueue, Kernel *kernel, size_t *global_
 
 void CleanUp(Context context, CommandQueue commandqueue, Program program, 	Kernel kernel);
 
-void printMat(char *imgname, Mat m); 
+void printMat(char *imgname, Mat m);
 void printMatInfo(Mat *m);
 Mat read_image(char *imagename);
 

@@ -4,7 +4,7 @@ man_MANS = qv4l2.1
 qv4l2_SOURCES = qv4l2.cpp general-tab.cpp ctrl-tab.cpp vbi-tab.cpp capture-win.cpp tpg-tab.cpp \
   capture-win-qt.cpp capture-win-qt.h capture-win-gl.cpp capture-win-gl.h alsa_stream.c alsa_stream.h \
   raw2sliced.cpp qv4l2.h capture-win.h general-tab.h vbi-tab.h raw2sliced.h \
-  v4l2-tpg-core.c v4l2-tpg-colors.c dehaze_core.cpp
+  v4l2-tpg-core.c v4l2-tpg-colors.c dehaze_core_opencl.cpp
 nodist_qv4l2_SOURCES = moc_qv4l2.cpp moc_general-tab.cpp moc_capture-win.cpp moc_vbi-tab.cpp qrc_qv4l2.cpp
 qv4l2_LDADD = ../../lib/libv4l2/libv4l2.la ../../lib/libv4lconvert/libv4lconvert.la \
   ../libv4l2util/libv4l2util.la ../libmedia_dev/libmedia_dev.la
@@ -19,7 +19,7 @@ qv4l2_LDFLAGS = $(QT_LIBS)
 endif
 
 qv4l2_CPPFLAGS += $(ALSA_CFLAGS)
-qv4l2_LDFLAGS += $(ALSA_LIBS) -pthread -lopencv_core -lopencv_highgui -lopencv_imgproc -lavutil -lavformat -lavcodec -lswscale -lm -ldl -lswresample -lSDL
+qv4l2_LDFLAGS += $(ALSA_LIBS) -pthread -lopencv_core -lopencv_highgui -lopencv_imgproc -lavutil -lavformat -lavcodec -lswscale -lm -ldl -lswresample -lSDL -lOpenCL -L/opt/AMDAPP/lib/x86_64/sdk
 
 EXTRA_DIST = enterbutt.png exit.png fileopen.png qv4l2_24x24.png qv4l2_64x64.png qv4l2.png qv4l2.svg \
   snapshot.png video-television.png fileclose.png qv4l2_16x16.png qv4l2_32x32.png qv4l2.desktop \
