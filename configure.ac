@@ -242,6 +242,7 @@ fi
 
 
 PKG_CHECK_MODULES(ALSA, [alsa], [alsa_pkgconfig=true], [alsa_pkgconfig=false])
+alsa_pkgconfig=false
 if test "x$alsa_pkgconfig" = "xtrue"; then
    AC_DEFINE([HAVE_ALSA], [1], [alsa library is present])
 else
