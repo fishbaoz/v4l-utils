@@ -331,15 +331,18 @@ ApplicationWindow::ApplicationWindow() :
 	m_leftWidget = new QWidget;
 	m_hboxlayout = new QHBoxLayout;
 	m_tabs = new QTabWidget;
-	m_hsplitter = new QSplitter;
+	m_hsplitter = new QSplitter(Qt::Horizontal);
+	m_right_vsplitter = new QSplitter(Qt::Vertical);
 	m_patternForm = new PatternForm(m_leftWidget, this);
 	#if 0
 	m_cenWidget->setLayout(m_hboxlayout);
 	m_hboxlayout->addWidget(m_tabs);
 	setCentralWidget(m_cenWidget);
 	#else
-	m_hsplitter->addWidget(m_tabs);
+	//m_hsplitter->addWidget(m_tabs);
 	m_hsplitter->addWidget(m_leftWidget);
+	m_hsplitter->addWidget(m_right_vsplitter);
+	m_right_vsplitter->insertWidget(1, m_tabs);
 	setCentralWidget(m_hsplitter);
 	#endif
 }
@@ -433,11 +436,13 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 	connect(m_genTab, SIGNAL(pixelAspectRatioChanged()), this, SLOT(updatePixelAspectRatio()));
 	connect(m_genTab, SIGNAL(croppingChanged()), this, SLOT(updateCropping()));
 	connect(m_genTab, SIGNAL(clearBuffers()), this, SLOT(clearBuffers()));
-	m_tabs->addTab(w, "General Settings");
+//	m_tabs->addTab(w, "General Settings");
+	w->hide();
 
 	w = new QWidget(m_tabs);
 	m_seqpatTab = new SeqPatTab(device, this, this, 4, w);
-	m_tabs->addTab(w, "Sequence && Pattern");
+//	m_tabs->addTab(w, "Sequence && Pattern");
+	w->hide();
 	
 	if (has_vid_out()) {
 		addTpgTab(m_minWidth);
@@ -457,7 +462,7 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 	}
 	statusBar()->clearMessage();
 	m_tabs->show();
-	m_tabs->hide();
+//	m_tabs->hide();
 	m_tabs->setFocus();
 	m_convertData = v4lconvert_create(g_fd());
 	bool canStream = has_rw() || has_streaming();
@@ -1475,7 +1480,7 @@ void ApplicationWindow::capStart(bool start)
 				m_capture->show();
 			else
 				//m_hboxlayout->addWidget(m_capture);
-				m_hsplitter->addWidget(m_capture);
+				m_right_vsplitter->insertWidget(0, m_capture);
 		}
 
 		statusBar()->showMessage("No frame");
@@ -1511,7 +1516,7 @@ void ApplicationWindow::capStart(bool start)
 				m_capture->show();
 			else
 				//m_hboxlayout->addWidget(m_capture);
-				m_hsplitter->addWidget(m_capture);
+				m_right_vsplitter->insertWidget(0, m_capture);
 		}
 
 		statusBar()->showMessage("No frame");
@@ -1591,7 +1596,7 @@ void ApplicationWindow::capStart(bool start)
 			m_capture->show();
 		else
 			//m_hboxlayout->addWidget(m_capture);
-			m_hsplitter->addWidget(m_capture);
+			m_right_vsplitter->insertWidget(0, m_capture);
 	}
 
 	statusBar()->showMessage("No frame");

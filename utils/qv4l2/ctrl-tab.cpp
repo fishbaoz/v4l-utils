@@ -141,7 +141,10 @@ void ApplicationWindow::addTabs(int m_winWidth)
 			grid->addWidget(m_line, m_row, m_col, 1, m_cols, Qt::AlignVCenter);
 			m_row++;
 		}
-		m_tabs->addTab(t, tabName);
+		if (QString::compare(tabName, "User Controls")) {
+			//m_tabs->addTab(t, tabName);
+			t->hide();
+		}
 		for (i = 0; i < iter->second.size(); i++) {
 			if (i & 1)
 				id = iter->second[(1+iter->second.size()) / 2 + i / 2];

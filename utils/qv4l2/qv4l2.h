@@ -274,6 +274,7 @@ private:
 	int m_increment;
 	QHBoxLayout *m_hboxlayout;
 	QSplitter *m_hsplitter;
+	QSplitter *m_right_vsplitter;
 	QWidget *m_leftWidget;
 	GeneralTab *m_genTab;
 	SeqPatTab *m_seqpatTab;
