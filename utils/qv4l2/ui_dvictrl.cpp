@@ -77,6 +77,7 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
         label_2->setGeometry(QRect(60, 10, 81, 17));
 
 	/*retranslate UI */
+	#if 0			/* English */
         label_3->setText(QApplication::translate("PatternForm", "resolution", 0, QApplication::UnicodeUTF8));
         label_4->setText(QApplication::translate("PatternForm", "refresh rate", 0, QApplication::UnicodeUTF8));
         sequencetabWidget->setTabText(sequencetabWidget->indexOf(dvi1_seqtab), QApplication::translate("PatternForm", "dvi1", 0, QApplication::UnicodeUTF8));
@@ -89,19 +90,33 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
         modetabWidget->setTabText(modetabWidget->indexOf(dvi2_modetab), QApplication::translate("PatternForm", "dvi2", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("PatternForm", "mode", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("PatternForm", "sequence", 0, QApplication::UnicodeUTF8));
+	#else
+        label_3->setText(QApplication::translate("PatternForm", "分辨率", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("PatternForm", "刷新率", 0, QApplication::UnicodeUTF8));
+        sequencetabWidget->setTabText(sequencetabWidget->indexOf(dvi1_seqtab), QApplication::translate("PatternForm", "dvi1", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QApplication::translate("PatternForm", "分辨率", 0, QApplication::UnicodeUTF8));
+        label_7->setText(QApplication::translate("PatternForm", "刷新率", 0, QApplication::UnicodeUTF8));
+        sequencetabWidget->setTabText(sequencetabWidget->indexOf(dvi2_seqtab), QApplication::translate("PatternForm", "dvi2", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("PatternForm", "模式", 0, QApplication::UnicodeUTF8));
+        modetabWidget->setTabText(modetabWidget->indexOf(dvi1_modetab), QApplication::translate("PatternForm", "dvi1", 0, QApplication::UnicodeUTF8));
+        label_8->setText(QApplication::translate("PatternForm", "模式", 0, QApplication::UnicodeUTF8));
+        modetabWidget->setTabText(modetabWidget->indexOf(dvi2_modetab), QApplication::translate("PatternForm", "dvi2", 0, QApplication::UnicodeUTF8));
+        label->setText(QApplication::translate("PatternForm", "模式", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("PatternForm", "时序", 0, QApplication::UnicodeUTF8));
+	#endif
 
 
         sequencetabWidget->setCurrentIndex(0);
         modetabWidget->setCurrentIndex(1);
 
-	mode1_comboBox->addItem("mode1");
-	mode1_comboBox->addItem("mode2");
-	mode1_comboBox->addItem("mode3");
+	mode1_comboBox->addItem(tr("模式1"));
+	mode1_comboBox->addItem(tr("模式2"));
+	mode1_comboBox->addItem(tr("模式3"));
 	connect(mode1_comboBox, SIGNAL(activated(int)), SLOT(patOutput1Changed(int)));
 
-	mode2_comboBox->addItem("mode1");
-	mode2_comboBox->addItem("mode2");
-	mode2_comboBox->addItem("mode3");
+	mode2_comboBox->addItem("模式1");
+	mode2_comboBox->addItem("模式2");
+	mode2_comboBox->addItem("模式3");
 	connect(mode2_comboBox, SIGNAL(activated(int)), SLOT(patOutput2Changed(int)));
 #if 0
 	Display *dpy = XOpenDisplay(NULL);

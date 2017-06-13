@@ -91,7 +91,7 @@ void ApplicationWindow::addTabs(int m_winWidth)
 	    m_ctrlMap.find(V4L2_CID_USER_CLASS) == m_ctrlMap.end()) {
 		memset(&qec, 0, sizeof(qec));
 		qec.id = V4L2_CID_USER_CLASS;
-		strcpy(qec.name, "User Controls");
+		strcpy(qec.name, "参数控制"); /* User Controls */
 		qec.type = V4L2_CTRL_TYPE_CTRL_CLASS;
 		m_ctrlMap[qec.id] = qec;
 	}
@@ -141,7 +141,7 @@ void ApplicationWindow::addTabs(int m_winWidth)
 			grid->addWidget(m_line, m_row, m_col, 1, m_cols, Qt::AlignVCenter);
 			m_row++;
 		}
-		if (QString::compare(tabName, "User Controls")) {
+		if (QString::compare(tabName, "参数控制")) {
 			//m_tabs->addTab(t, tabName);
 			t->hide();
 		}
@@ -210,7 +210,7 @@ void ApplicationWindow::finishGrid(QGridLayout *grid, unsigned which)
 	QWidget *m_w = new QWidget();
 	QHBoxLayout *m_boxLayoutBottom = new QHBoxLayout(m_w);
 
-	QCheckBox *cbox = new QCheckBox("Update on change", w);
+	QCheckBox *cbox = new QCheckBox("实时", w);	/* Update on change */
 	m_widgetMap[which | CTRL_UPDATE_ON_CHANGE] = cbox;
 	addWidget(grid, cbox);
 	connect(cbox, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
@@ -218,19 +218,19 @@ void ApplicationWindow::finishGrid(QGridLayout *grid, unsigned which)
 
 	grid->setColumnStretch(0, 1);
 
-	QPushButton *defBut = new QPushButton("Set Defaults", w);
+	QPushButton *defBut = new QPushButton("设为默认", w); /* Set Defaults */
 	m_widgetMap[which | CTRL_DEFAULTS] = defBut;
 	m_boxLayoutBottom->addWidget(defBut);
 	connect(defBut, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
 	m_sigMapper->setMapping(defBut, which | CTRL_DEFAULTS);
 
-	QPushButton *refreshBut = new QPushButton("Refresh", w);
+	QPushButton *refreshBut = new QPushButton("刷新", w); /* Refresh */
 	m_widgetMap[which | CTRL_REFRESH] = refreshBut;
 	m_boxLayoutBottom->addWidget(refreshBut);
 	connect(refreshBut, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
 	m_sigMapper->setMapping(refreshBut, which | CTRL_REFRESH);
 
-	QPushButton *button = new QPushButton("Update", w);
+	QPushButton *button = new QPushButton("应用", w); /* Update */
 	m_widgetMap[which | CTRL_UPDATE] = button;
 	m_boxLayoutBottom->addWidget(button);
 	connect(button, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
@@ -258,6 +258,26 @@ void ApplicationWindow::addCtrl(QGridLayout *grid, const v4l2_query_ext_ctrl &qe
 	m_boxLayout->setMargin(0);
 	__u64 dif;
 
+	if (strcmp(qec.name, "Brightness") == 0)
+		name = QString("亮度");
+	else if (strcmp(qec.name, "Contrast") == 0)
+		name = QString("对比度");
+	else if (strcmp(qec.name, "Saturation") == 0)
+		name = QString("饱和度");
+	else if (strcmp(qec.name, "Hue") == 0)
+		name = QString("色度");
+	else if (strcmp(qec.name, "Gamma") == 0)
+		name = QString("伽玛值");
+	else if (strcmp(qec.name, "White Balance Temperature") == 0)
+		name = QString("白平衡");
+	else if (strcmp(qec.name, "Sharpness") == 0)
+		name = QString("锐化");
+	else if (strcmp(qec.name, "Power Line Frequency") == 0)
+		name = QString("电源线频率");
+	else if (strcmp(qec.name, "White Balance Temperature, Auto") == 0)
+		name = QString("自动白平衡");
+
+	printf("%s\n", qec.name);
 	switch (qec.type) {
 	case V4L2_CTRL_TYPE_INTEGER:
 		addLabel(grid, name);

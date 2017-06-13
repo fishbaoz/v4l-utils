@@ -46,6 +46,7 @@ extern "C" {
 #include <QCloseEvent>
 #include <QInputDialog>
 #include <QDesktopWidget>
+#include <QTextCodec>
 
 #include <assert.h>
 #include <sys/mman.h>
@@ -101,6 +102,11 @@ ApplicationWindow::ApplicationWindow() :
 	m_tpgYCbCrEnc = 0;
 	m_tpgQuantRange = 0;
 	m_tpgLimRGBRange = NULL;
+	QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+
+	QTextCodec::setCodecForLocale(codec);
+	QTextCodec::setCodecForCStrings(codec);
+	QTextCodec::setCodecForTr(codec);
 #define ONE_SCREEN_TEST 0
 //	m_pattern = new PatternWin(this);
 //	m_pattern->showFullScreen();
