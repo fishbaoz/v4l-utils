@@ -347,9 +347,14 @@ ApplicationWindow::ApplicationWindow() :
 	setCentralWidget(m_cenWidget);
 	#else
 	//m_hsplitter->addWidget(m_tabs);
+	QList<int> hwidgetSizes, vwidgetSizes;
+	hwidgetSizes << 100 << 700;
 	m_hsplitter->addWidget(m_leftWidget);
 	m_hsplitter->addWidget(m_right_vsplitter);
+	m_hsplitter->setSizes(hwidgetSizes);
 	m_right_vsplitter->insertWidget(1, m_tabs);
+	vwidgetSizes << 300 << 200;
+	m_right_vsplitter->setSizes(vwidgetSizes);
 	setCentralWidget(m_hsplitter);
 	#endif
 }
