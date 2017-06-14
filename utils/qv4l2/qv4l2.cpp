@@ -102,6 +102,7 @@ ApplicationWindow::ApplicationWindow() :
 	m_tpgYCbCrEnc = 0;
 	m_tpgQuantRange = 0;
 	m_tpgLimRGBRange = NULL;
+	enhanceVideoFlag = true;
 	QTextCodec *codec = QTextCodec::codecForName("UTF-8");
 
 	QTextCodec::setCodecForLocale(codec);
@@ -1737,6 +1738,14 @@ void ApplicationWindow::saveRaw(bool checked)
 	connect(dlg, SIGNAL(fileSelected(const QString &)), this, SLOT(openRawFile(const QString &)));
 	connect(dlg, SIGNAL(rejected()), this, SLOT(rejectedRawFile()));
 	dlg->show();
+}
+void ApplicationWindow::enhanceVideo(int state)
+{
+	if (state == Qt::Checked)
+		enhanceVideoFlag = true;
+	else
+		enhanceVideoFlag = false;
+	//printf("enh=%d\n", enhanceVideoFlag);
 }
 
 void ApplicationWindow::about()

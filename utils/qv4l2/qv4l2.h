@@ -110,6 +110,7 @@ private slots:
 public:
 	void setDevice(const QString &device, bool rawOpen);
 	PatternWin *m_pattern[3];
+	bool enhanceVideoFlag;
 
 	// capturing
 private:
@@ -157,6 +158,7 @@ private slots:
 	void setLinearFilter(bool);
 	void traceIoctls(bool);
 	void changeAudioDevice();
+	void enhanceVideo(int);
 
 	// gui
 private slots:

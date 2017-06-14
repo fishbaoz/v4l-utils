@@ -18,6 +18,7 @@
  */
 
 #include "capture-win-qt.h"
+#include "laplacian.h"
 
 CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	CaptureWin(aw),
@@ -100,7 +101,19 @@ void CaptureWinQt::paintFrame()
 	m_filled = false;
 
 	unsigned char *data = (m_data == NULL) ? m_image->bits() : m_data;
+//	printf("format=%x, h=%d, w=%d\n", m_image->format(), m_image->height(), m_image->width());
 
+	cv::Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
+	if (m_appWin->enhanceVideoFlag) {
+		edgeEnhance(src, dst);
+	//	cv::imwrite("capture.jpg", src);
+	//	cvtColor(src, gray, CV_BGR2GRAY);
+	//	gray.convertTo(gray, CV_8UC3);
+	//	cv::imwrite("gray.jpg", gray);
+	//	data = gray.data;
+	//	dst.convertTo(dst, CV_8UC3);
+		data = dst.data;
+	}
 	QImage displayFrame(&data[m_cropOffset],
 			    m_crop.size.width(), m_crop.size.height(),
 			    m_image->width() * (m_image->depth() / 8),

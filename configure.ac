@@ -190,7 +190,7 @@ AS_IF([test "x$with_jpeg" != xno],
 AM_CONDITIONAL([HAVE_JPEG], [$have_jpeg])
 
 QT_VERSION="none"
-
+qt_pkgconfig_gl=false
 PKG_CHECK_MODULES(QT5, [Qt5Core >= 5.0 Qt5Gui >= 5.0 Qt5Widgets >= 5.0], [qt_pkgconfig=true], [qt_pkgconfig=false])
 if test "x$qt_pkgconfig" = "xtrue"; then
    QT_CFLAGS="$QT5_CFLAGS -fPIC"
@@ -204,6 +204,7 @@ if test "x$qt_pkgconfig" = "xtrue"; then
    AC_SUBST(UIC)
    AC_SUBST(RCC)
    PKG_CHECK_MODULES(QT5GL, [Qt5OpenGL >= 5.0 gl], [qt_pkgconfig_gl=true], [qt_pkgconfig_gl=false])
+   qt_pkgconfig_gl=false
    if test "x$qt_pkgconfig_gl" = "xtrue"; then
       QTGL_CFLAGS="$QT5GL_CFLAGS -fPIC"
       QTGL_LIBS="$QT5GL_LIBS"
@@ -228,6 +229,7 @@ else
       AC_SUBST(UIC)
       AC_SUBST(RCC)
       PKG_CHECK_MODULES(QTGL, [QtOpenGL >= 4.8 gl], [qt_pkgconfig_gl=true], [qt_pkgconfig_gl=false])
+      qt_pkgconfig_gl=false
       if test "x$qt_pkgconfig_gl" = "xtrue"; then
          AC_DEFINE([HAVE_QTGL], [1], [qt has opengl support])
          QT_VERSION="v4 with QtGL"

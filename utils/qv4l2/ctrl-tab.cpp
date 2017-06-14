@@ -212,9 +212,14 @@ void ApplicationWindow::finishGrid(QGridLayout *grid, unsigned which)
 
 	QCheckBox *cbox = new QCheckBox("实时", w);	/* Update on change */
 	m_widgetMap[which | CTRL_UPDATE_ON_CHANGE] = cbox;
-	addWidget(grid, cbox);
+	//addWidget(grid, cbox);
 	connect(cbox, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
 	m_sigMapper->setMapping(cbox, which | CTRL_UPDATE_ON_CHANGE);
+	cbox->hide();
+
+	QCheckBox *enhbox = new QCheckBox("拉普拉斯视频增强", w);	/* Update on change */
+	addWidget(grid, enhbox);
+	connect(enhbox, SIGNAL(stateChanged(int)), this, SLOT(enhanceVideo(int)));
 
 	grid->setColumnStretch(0, 1);
 
@@ -223,12 +228,14 @@ void ApplicationWindow::finishGrid(QGridLayout *grid, unsigned which)
 	m_boxLayoutBottom->addWidget(defBut);
 	connect(defBut, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
 	m_sigMapper->setMapping(defBut, which | CTRL_DEFAULTS);
+	defBut->hide();
 
 	QPushButton *refreshBut = new QPushButton("刷新", w); /* Refresh */
 	m_widgetMap[which | CTRL_REFRESH] = refreshBut;
 	m_boxLayoutBottom->addWidget(refreshBut);
 	connect(refreshBut, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
 	m_sigMapper->setMapping(refreshBut, which | CTRL_REFRESH);
+	refreshBut->hide();
 
 	QPushButton *button = new QPushButton("应用", w); /* Update */
 	m_widgetMap[which | CTRL_UPDATE] = button;
@@ -236,9 +243,11 @@ void ApplicationWindow::finishGrid(QGridLayout *grid, unsigned which)
 	connect(button, SIGNAL(clicked()), m_sigMapper, SLOT(map()));
 	m_sigMapper->setMapping(button, which | CTRL_UPDATE);
 	connect(cbox, SIGNAL(toggled(bool)), button, SLOT(setDisabled(bool)));
+	button->hide();
 
 	grid->addWidget(m_w, m_row, 3, Qt::AlignRight);
 	cbox->setChecked(true);
+	enhbox->setChecked(true);
 
 	refresh(which);
 }
@@ -277,7 +286,7 @@ void ApplicationWindow::addCtrl(QGridLayout *grid, const v4l2_query_ext_ctrl &qe
 	else if (strcmp(qec.name, "White Balance Temperature, Auto") == 0)
 		name = QString("自动白平衡");
 
-	printf("%s\n", qec.name);
+//	printf("%s\n", qec.name);
 	switch (qec.type) {
 	case V4L2_CTRL_TYPE_INTEGER:
 		addLabel(grid, name);

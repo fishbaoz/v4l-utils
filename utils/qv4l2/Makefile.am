@@ -4,7 +4,7 @@ man_MANS = qv4l2.1
 qv4l2_SOURCES = qv4l2.cpp general-tab.cpp seq-pat-tab.cpp ctrl-tab.cpp vbi-tab.cpp capture-win.cpp pattern-win.cpp tpg-tab.cpp \
   capture-win-qt.cpp capture-win-qt.h capture-win-gl.cpp capture-win-gl.h alsa_stream.c alsa_stream.h ui_dvictrl.cpp \
   raw2sliced.cpp qv4l2.h capture-win.h pattern-win.h general-tab.h seq-pat-tab.h vbi-tab.h raw2sliced.h \
-  v4l2-tpg-core.c v4l2-tpg-colors.c xrandr.c
+  v4l2-tpg-core.c v4l2-tpg-colors.c laplacian.cpp xrandr.c
 nodist_qv4l2_SOURCES = moc_qv4l2.cpp moc_general-tab.cpp moc_seq-pat-tab.cpp moc_capture-win.cpp moc_pattern-win.cpp moc_vbi-tab.cpp qrc_qv4l2.cpp moc_ui_dvictrl.cpp
 qv4l2_LDADD = ../../lib/libv4l2/libv4l2.la ../../lib/libv4lconvert/libv4lconvert.la \
   ../libv4l2util/libv4l2util.la ../libmedia_dev/libmedia_dev.la
@@ -22,6 +22,7 @@ qv4l2_CPPFLAGS += $(ALSA_CFLAGS)
 qv4l2_LDFLAGS += $(ALSA_LIBS) -pthread
 
 qv4l2_LDFLAGS += -lXrandr -lX11 -lm
+qv4l2_LDFLAGS += -lopencv_core -lopencv_highgui -lopencv_imgproc #-lavutil -lavformat -lavcodec
 
 EXTRA_DIST = enterbutt.png exit.png fileopen.png qv4l2_24x24.png qv4l2_64x64.png qv4l2.png qv4l2.svg \
   snapshot.png video-television.png fileclose.png qv4l2_16x16.png qv4l2_32x32.png qv4l2.desktop \
