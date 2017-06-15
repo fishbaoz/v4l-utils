@@ -10,5 +10,6 @@ using namespace cv;
 using namespace std;
 
 void edgeEnhance(cv::Mat& srcImg, cv::Mat& dstImg);
+void sharpenImage2(const Mat &image, Mat &result);
 
 #endif

@@ -51,6 +51,12 @@ void edgeEnhance(cv::Mat& srcImg, cv::Mat& dstImg)
         cv::merge(rgb, dstImg);
 }
 
+void sharpenImage2(const Mat &image, Mat &result)
+{
+        Mat kernel = (Mat_<float>(3,3) << 0,-1,0,-1,5,-1,0,-1,0);
+        filter2D(image,result,image.depth(),kernel);
+}
+
 /* main */
 int laplacian(int argc, char** argv)
 {

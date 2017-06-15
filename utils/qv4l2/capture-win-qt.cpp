@@ -105,13 +105,14 @@ void CaptureWinQt::paintFrame()
 
 	cv::Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
 	if (m_appWin->enhanceVideoFlag) {
-		edgeEnhance(src, dst);
+	//	edgeEnhance(src, dst);
 	//	cv::imwrite("capture.jpg", src);
 	//	cvtColor(src, gray, CV_BGR2GRAY);
 	//	gray.convertTo(gray, CV_8UC3);
 	//	cv::imwrite("gray.jpg", gray);
 	//	data = gray.data;
 	//	dst.convertTo(dst, CV_8UC3);
+		sharpenImage2(src,dst);
 		data = dst.data;
 	}
 	QImage displayFrame(&data[m_cropOffset],
