@@ -1,6 +1,6 @@
 bin_PROGRAMS = qv4l2
 man_MANS = qv4l2.1
-GIT_VERSION=$(shell git describe)
+GIT_VERSION=$(shell git describe --dirty)
 
 qv4l2_SOURCES = qv4l2.cpp general-tab.cpp seq-pat-tab.cpp ctrl-tab.cpp vbi-tab.cpp capture-win.cpp pattern-win.cpp tpg-tab.cpp \
   capture-win-qt.cpp capture-win-qt.h capture-win-gl.cpp capture-win-gl.h alsa_stream.c alsa_stream.h ui_dvictrl.cpp \
