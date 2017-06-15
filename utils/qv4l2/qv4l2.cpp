@@ -1832,7 +1832,8 @@ static void usage()
 	       "  -S, --sdr-device=<dev> use device <dev> as the SDR device\n"
 	       "                     if <dev> is a number, then /dev/swradio<dev> is used\n"
 	       "  -h, --help         display this help message\n"
-	       "  -R, --raw          open device in raw mode.\n");
+	       "  -R, --raw          open device in raw mode.\n"
+	       "  " GIT_VERSION	"\n");
 }
 
 static void usageError(const char *msg)
