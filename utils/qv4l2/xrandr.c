@@ -3112,7 +3112,7 @@ main (int argc, char **argv)
 			if (output->primary) {
 				printf(" primary");
 			}
-			printf("%d\n", __LINE__);
+			//printf("%d\n", __LINE__);
 			if (cur_mode)
 			{
 				if (crtc_info) {
@@ -3126,7 +3126,7 @@ main (int argc, char **argv)
 				}
 				if (verbose)
 					printf (" (0x%x)", (int)cur_mode->id);
-				printf("%d\n", __LINE__);
+				//printf("%d\n", __LINE__);
 				if (output->rotation != RR_Rotate_0 || verbose)
 				{
 					printf (" %s", 
@@ -3135,7 +3135,7 @@ main (int argc, char **argv)
 						printf (" %s", reflection_name (output->rotation));
 				}
 			}
-			printf("%d\n", __LINE__);
+			//printf("%d\n", __LINE__);
 			if (rotations != RR_Rotate_0 || verbose)
 			{
 				Bool    first = True;
@@ -3146,19 +3146,19 @@ main (int argc, char **argv)
 						printf("%s", direction[i]);
 					}
 				}
-				printf("%d\n", __LINE__);
+				//printf("%d\n", __LINE__);
 				if (rotations & RR_Reflect_X)
 				{
 					if (!first) printf (" "); first = False;
 					printf ("x axis");
 				}
-				printf("%d\n", __LINE__);
+				//printf("%d\n", __LINE__);
 				if (rotations & RR_Reflect_Y)
 				{
 					if (!first) printf (" ");
 					printf ("y axis");
 				}
-				printf("%d\n", __LINE__);
+				//printf("%d\n", __LINE__);
 				printf (")");
 			}
 			if (cur_mode)
@@ -3166,7 +3166,7 @@ main (int argc, char **argv)
 				printf (" %dmm x %dmm",
 					(int)output_info->mm_width, (int)output_info->mm_height);
 			}
-			printf("%d\n", __LINE__);
+			//printf("%d\n", __LINE__);
 			if (cur_crtc && cur_crtc->panning_info &&
 			    cur_crtc->panning_info->width > 0)
 			{
@@ -3200,7 +3200,7 @@ main (int argc, char **argv)
 						output->gamma.red, output->gamma.green, output->gamma.blue);
 					printf ("\tBrightness: %#.2g\n", output->brightness);
 				}
-				printf("%d\n", __LINE__);
+				//printf("%d\n", __LINE__);
 				printf ("\tClones:    ");
 				for (j = 0; j < output_info->nclone; j++)
 				{
@@ -3230,7 +3230,7 @@ main (int argc, char **argv)
 						pan->border_right, pan->border_bottom);
 				}
 			}
-			printf("%d\n", __LINE__);
+			//printf("%d\n", __LINE__);
 			if (verbose)
 			{
 				int x, y;
@@ -3246,7 +3246,7 @@ main (int argc, char **argv)
 					printf ("\n\t           filter: %s", output->transform.filter);
 				printf ("\n");
 			}
-			printf("%d\n", __LINE__);
+			//printf("%d\n", __LINE__);
 
 			if (verbose || properties)
 			{
@@ -3303,7 +3303,7 @@ main (int argc, char **argv)
 					free(propinfo);
 				}
 			}
-			printf("%d\n", __LINE__);
+			//printf("%d\n", __LINE__);
 
 			if (verbose)
 			{
@@ -3333,7 +3333,7 @@ main (int argc, char **argv)
 			}
 			else
 			{
-				printf("%d\n", __LINE__);
+				//printf("%d\n", __LINE__);
 				int num_retmodes;
 
 				mode_shown = calloc (output_info->nmode, sizeof (Bool));
@@ -3350,6 +3350,8 @@ main (int argc, char **argv)
 					printf (" name %-12s", jmode->name);
 					#ifdef QT_SHARED
 					if (ret_modes) strcpy(ret_modes[output_num][num_retmodes++], jmode->name);
+					#else
+					num_retmodes ++;
 					#endif
 					printf("num_retmodes=%d\n", num_retmodes);
 					for (k = j; k < output_info->nmode; k++)
@@ -3372,10 +3374,10 @@ main (int argc, char **argv)
 					printf ("\n");
 				}
 				free (mode_shown);
-				output_num ++;
+				if (num_retmodes) output_num ++;
 			}
 		}
-		printf("%d\n", __LINE__);
+		//printf("%d\n", __LINE__);
 
 		for (m = 0; m < res->nmode; m++)
 		{
@@ -3419,7 +3421,7 @@ main (int argc, char **argv)
 			}
 		}
         }
-	printf("%d\n", __LINE__);
+	//printf("%d\n", __LINE__);
 
         sc = XRRGetScreenInfo (dpy, root);
         if (sc == NULL) 
@@ -3519,7 +3521,7 @@ main (int argc, char **argv)
 			printf ("\n");
 		}
         }
-	printf("%d\n", __LINE__);
+	//printf("%d\n", __LINE__);
 
         if (verbose) { 
 		printf("Setting size to %d, rotation to %s\n",  size, direction[rot]);
