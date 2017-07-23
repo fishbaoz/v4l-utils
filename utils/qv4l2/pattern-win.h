@@ -43,7 +43,9 @@ public:
 	PatternWin(ApplicationWindow *aw, QDesktopWidget *d, int screen_num);
 	~PatternWin();
 	void updatePattern(int mode);
+	void updateScreen();
 	QRect screen_rect;
+	char mode_name[32];
 
 public slots:
 //	void resetSize();
@@ -103,7 +105,6 @@ protected:
 	 * @brief Determines if scaling is to be applied to video frame.
 	 */
 //	static bool m_enableScaling;
-
 signals:
 	void close();
 

@@ -85,11 +85,11 @@ bool CaptureWinGL::hasNativeFormat(__u32 format)
 
 bool CaptureWinGL::isSupported()
 {
-#ifdef HAVE_QTGL
-	return true;
-#else
+//#ifdef HAVE_QTGL
+//	return true;
+//#else
 	return false;
-#endif
+//#endif
 }
 
 void CaptureWinGL::setColorspace(unsigned colorspace, unsigned xfer_func,

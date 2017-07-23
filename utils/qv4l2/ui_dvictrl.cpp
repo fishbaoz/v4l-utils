@@ -135,12 +135,16 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	qDebug("width=%d, height=%d\n", width, height);
 	XCloseDisplay(dpy);
 #endif
-		char *argv[]={"xrandr", "-d", ":0"};
-		char modes_table[3][32][256]={0};
-		memset(modes_table, 0, /* sizeof(modes_table)*/3*32*256   );
-	//	printf("sizeof argv=%d\n", sizeof(argv));
-	xrandr(3, argv, modes_table);
-	char *mode= modes_table[0][0];
+	char *argv[]={"xrandr", "-d", ":0"};
+	char modes_table[3][32][256]={0};
+	char modes_name[3][32]={0};
+	memset(modes_table, 0, /* sizeof(modes_table)*/3*32*256   );
+	printf("sizeof argv=%d\n", sizeof(argv));
+	xrandr(3, argv, modes_table, modes_name);
+	char *mode= &(modes_table[1][0][0]);
+	printf("names=%s,%s, %s\n", modes_name[0], modes_name[1], modes_name[2]);
+	if (modes_name[1][0])
+		strcpy(m_appWin->m_pattern[1]->mode_name, modes_name[1]);
 	while (mode[0]) {
 		printf("mode=%s\n", &mode[0]);
 			resolution1_comboBox->addItem((char *)(&mode[0]));
@@ -148,8 +152,10 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	}
 	connect(resolution1_comboBox, SIGNAL(activated(int)), SLOT(resolutionOutput1Changed(int)));
 
-	//	for (;;);
+		//for (;;);
 	mode = &(modes_table[2][0][0]);
+	if (modes_name[2][0])
+		strcpy(m_appWin->m_pattern[2]->mode_name, modes_name[2]);
 	while (mode[0]) {
 		printf("mode=%s\n", &mode[0]);
 		resolution2_comboBox->addItem((char *)(&mode[0]));
@@ -157,6 +163,7 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	}
 	connect(resolution2_comboBox, SIGNAL(activated(int)), SLOT(resolutionOutput2Changed(int)));
 
+	//for (;;);
 	refreshrate1_comboBox->addItem("50");
 	refreshrate1_comboBox->addItem("60");
 	refreshrate1_comboBox->addItem("70");
@@ -166,6 +173,7 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	refreshrate2_comboBox->addItem("60");
 	refreshrate2_comboBox->addItem("70");
 	connect(refreshrate2_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput2Changed(int)));
+	//for (;;);
 }
 
 PatternForm::~PatternForm()
@@ -186,43 +194,105 @@ void PatternForm::patOutput2Changed(int mode)
 	m_appWin->m_pattern[2]->updatePattern(mode+1);
 }
 
+int getw(char *mode)
+{
+	int ret;
+	char *beg = mode;
+	while(*mode != 'x')
+		mode ++;
+	*mode = '\n';
+	ret = atoi(beg);
+	printf("get w=%d\n", ret);
+	*mode = 'x';
+	return ret;
+}
+int geth(char *mode)
+{
+	int ret;
+	while(*mode != 'x')
+		mode ++;
+	mode ++;
+	ret = atoi(mode);
+	printf("get h=%d\n", ret);
+	return ret;
+}
 void PatternForm::resolutionOutput1Changed(int mode)
 {
 //	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
 //	m_appWin->m_pattern[1]->updatePattern(mode+1);
 	qDebug("resolution=%s\n", qPrintable(resolution1_comboBox->currentText()));
+	char mode_name[32]="DFP4";
 	char dest_mode[10]="1920x1080";
-	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
-  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	//char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
+	//char *argv[]={"xrandr", "-d", ":0", "--output", "DFP4", "--mode", dest_mode, NULL};
+	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[1]->mode_name, "--mode", dest_mode, NULL};
+  	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution1_comboBox->currentText()));
-	xrandr(7, argv, NULL);
+	xrandr(7, argv, NULL, NULL);
+	//xrandr(7, argv, NULL);
+//	m_appWin->m_pattern[1]->updateScreen();
+	m_appWin->m_pattern[1]->screen_rect.setWidth(getw(dest_mode));
+	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+	m_appWin->m_pattern[1]->screen_rect.setHeight(geth(dest_mode));
+	m_appWin->m_pattern[1]->screen_rect.setLeft(
+		m_appWin->m_pattern[1]->screen_rect.width()
+	);
+	
+	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+	m_appWin->m_pattern[2]->screen_rect.setLeft(
+		m_appWin->m_pattern[0]->screen_rect.width() +
+		m_appWin->m_pattern[1]->screen_rect.width()
+	);
+	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+	printf("1 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
+	
+	m_appWin->m_pattern[1]->updateScreen();
+	m_appWin->m_pattern[2]->updateScreen();
+	//patOutput1Changed(1);
 }
 
 void PatternForm::resolutionOutput2Changed(int mode)
 {
 	qDebug("resolution=%s\n", qPrintable(resolution2_comboBox->currentText()));
 	char dest_mode[10]="1920x1080";
-	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
-  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	//char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
+	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[2]->mode_name, "--mode", dest_mode, NULL};
+  	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution2_comboBox->currentText()));
-	xrandr(7, argv, NULL);
+	xrandr(7, argv, NULL, NULL);
+	m_appWin->m_pattern[2]->screen_rect.setWidth(getw(dest_mode));
+	m_appWin->m_pattern[2]->screen_rect.setHeight(geth(dest_mode));
+	m_appWin->m_pattern[1]->screen_rect.setLeft(
+		m_appWin->m_pattern[0]->screen_rect.width()
+	);
+	m_appWin->m_pattern[2]->screen_rect.setLeft(
+		m_appWin->m_pattern[0]->screen_rect.width() +
+		m_appWin->m_pattern[1]->screen_rect.width()
+	);
+	printf("2 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
+	
+	m_appWin->m_pattern[1]->updateScreen();
+	m_appWin->m_pattern[2]->updateScreen();
+	//m_appWin->m_pattern[2]->updateScreen();
+	//m_appWin->updateScreen();
+	//patOutput2Changed(1);
 }
 
 void PatternForm::refreshOutput1Changed(int rate)
 {
 	char dest_rate[10]="60";
-	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--rate", dest_rate, NULL};
-  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[1]->mode_name, "--rate", dest_rate, NULL};
+  	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_rate, qPrintable(refreshrate1_comboBox->currentText()));
-	xrandr(7, argv, NULL);
-
+	xrandr(7, argv, NULL, NULL);
+	
 }
 
 void PatternForm::refreshOutput2Changed(int rate)
 {
 	char dest_rate[10]="60";
-	char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--rate", dest_rate, NULL};
-  	//	printf("sizeof argv=%d\n", sizeof(argv));
+	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[2]->mode_name, "--rate", dest_rate, NULL};
+  	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_rate, qPrintable(refreshrate2_comboBox->currentText()));
-	xrandr(7, argv, NULL);
+	xrandr(7, argv, NULL, NULL);
 }

@@ -2233,7 +2233,7 @@ find_provider (name_t *name)
 }
 #ifdef QT_SHARED
 int
-xrandr(int argc, char **argv, char ret_modes[][32][256])
+xrandr(int argc, char **argv, char ret_modes[][32][256], char ret_modenames[][32])
 #else
 int
 main (int argc, char **argv)
@@ -3374,7 +3374,10 @@ main (int argc, char **argv)
 					printf ("\n");
 				}
 				free (mode_shown);
-				if (num_retmodes) output_num ++;
+				if (num_retmodes) {
+					strcpy(ret_modenames[output_num], output_info->name);
+					output_num ++;
+				}
 			}
 		}
 		//printf("%d\n", __LINE__);

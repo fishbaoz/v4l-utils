@@ -127,6 +127,7 @@ ApplicationWindow::ApplicationWindow() :
 		m_pattern[i]->move(0, 0);
 		#else
 		m_pattern[i]->move(pos, 0);
+		m_pattern[i]->screen_rect.setLeft(pos);
 		#endif
 		//m_pattern[i]->move(0, 0);
 		if (i != 0) m_pattern[i]->show();
@@ -365,6 +366,28 @@ ApplicationWindow::~ApplicationWindow()
 	closeDevice();
 }
 
+void ApplicationWindow::updateScreen()
+{
+	QApplication::syncX();
+	QDesktopWidget *desktop = QApplication::desktop();
+	int screen_count = desktop->screenCount();
+	int pos=0;
+	printf("screen_count=%d\n", screen_count);
+	for (int i=0; i<screen_count; i++) {
+		delete m_pattern[i];
+		m_pattern[i] = new PatternWin(this, desktop, i); // TODO
+		//m_pattern[i]->showFullScreen();
+		#if ONE_SCREEN_TEST
+		m_pattern[i]->move(0, 0);
+		#else
+		m_pattern[i]->move(pos, 0);
+		#endif
+		//m_pattern[i]->move(0, 0);
+		if (i != 0) m_pattern[i]->show();
+		pos += m_pattern[i]->screen_rect.width();
+	}
+
+}
 void ApplicationWindow::updateColorspace()
 {
 	if (!m_capture)
@@ -452,7 +475,7 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 	w->hide();
 
 	w = new QWidget(m_tabs);
-	m_seqpatTab = new SeqPatTab(device, this, this, 4, w);
+//	m_seqpatTab = new SeqPatTab(device, this, this, 4, w);
 //	m_tabs->addTab(w, "Sequence && Pattern");
 	w->hide();
 	

@@ -111,6 +111,7 @@ public:
 	void setDevice(const QString &device, bool rawOpen);
 	PatternWin *m_pattern[3];
 	bool enhanceVideoFlag;
+	void updateScreen();
 
 	// capturing
 private:

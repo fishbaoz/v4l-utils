@@ -86,6 +86,7 @@ PatternWin::PatternWin(ApplicationWindow *aw) :
 	//QImage result = img->scaled(rect.width(), rect.height());
 	//m_videoSurface->setPixmap(QPixmap::fromImage(result));
 
+	screen_rect = desktop->screenGeometry(screen_num); //TODO:
 }
 
 void PatternWin::updatePattern(int mode)
@@ -117,12 +118,30 @@ void PatternWin::updatePattern(int mode)
 		}
 		break;
 	}
-//	screen_rect = desktop->screenGeometry(0 /*screen_num*/); //TODO:
+	m_image = img;
+	screen_rect = desktop->screenGeometry(screen_num); //TODO:
+	printf("width=%d, height=%d\n", screen_rect.width(), screen_rect.height());
 	QImage result = img->scaled(screen_rect.width(), screen_rect.height());
 	m_videoSurface->setPixmap(QPixmap::fromImage(result));
 }
 
+/* refresh after resolution is changed. */
+void PatternWin::updateScreen()
+{
+	//screen_rect = desktop->screenGeometry(screen_num);
+//	m_image->scaled(screen_rect.width(), screen_rect.height());
+	buildWindow(m_videoSurface);
+	resize(screen_rect.width(), screen_rect.height());
+	QImage result = m_image->scaled(screen_rect.width(), screen_rect.height());
+	m_videoSurface->setPixmap(QPixmap::fromImage(result));
+	screen_rect = desktop->screenGeometry(screen_num);
+	move(screen_rect.left(), 0);
 
+}
+
+//void PatternWin::updateScreens()
+//{
+//}
 PatternWin::PatternWin(ApplicationWindow *aw, QDesktopWidget *d, int n) :
 	m_appWin(aw),
 	desktop(d),
@@ -165,6 +184,7 @@ PatternWin::PatternWin(ApplicationWindow *aw, QDesktopWidget *d, int n) :
 	buildWindow(m_videoSurface);
 	screen_rect = desktop->screenGeometry(screen_num);
 	resize(screen_rect.width(), screen_rect.height());
+	printf("%s, w=%d, h=%d\n", __func__, screen_rect.width(), screen_rect.height());
 //	move (0, 0);
 	updatePattern(1);
 }
@@ -184,7 +204,8 @@ PatternWin::~PatternWin()
 void PatternWin::buildWindow(QWidget *videoSurface)
 {
 	int l, t, r, b;
-	m_vboxLayout = new QVBoxLayout(this);
+	if (m_vboxLayout)
+		m_vboxLayout = new QVBoxLayout(this);
 	m_vboxLayout->getContentsMargins(&l, &t, &r, &b);
 	m_vboxLayout->setMargin(0);
 	m_vboxLayout->addWidget(videoSurface, 1000, Qt::AlignCenter);
