@@ -235,7 +235,7 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
 	m_appWin->m_pattern[1]->screen_rect.setHeight(geth(dest_mode));
 	m_appWin->m_pattern[1]->screen_rect.setLeft(
-		m_appWin->m_pattern[1]->screen_rect.width()
+		m_appWin->m_pattern[0]->screen_rect.width()
 	);
 	
 	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());

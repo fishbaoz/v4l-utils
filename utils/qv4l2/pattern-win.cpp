@@ -134,7 +134,7 @@ void PatternWin::updateScreen()
 	resize(screen_rect.width(), screen_rect.height());
 	QImage result = m_image->scaled(screen_rect.width(), screen_rect.height());
 	m_videoSurface->setPixmap(QPixmap::fromImage(result));
-	screen_rect = desktop->screenGeometry(screen_num);
+//	screen_rect = desktop->screenGeometry(screen_num);
 	move(screen_rect.left(), 0);
 
 }
