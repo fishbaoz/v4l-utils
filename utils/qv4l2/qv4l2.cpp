@@ -112,7 +112,7 @@ ApplicationWindow::ApplicationWindow() :
 //	m_pattern = new PatternWin(this);
 //	m_pattern->showFullScreen();
 	QDesktopWidget *desktop = QApplication::desktop();
-	int screen_count = desktop->screenCount();
+	screen_count = desktop->screenCount();
 	int prim_screen = desktop->primaryScreen();
 	// TODO: remove
 	#if ONE_SCREEN_TEST
@@ -132,6 +132,7 @@ ApplicationWindow::ApplicationWindow() :
 		//m_pattern[i]->move(0, 0);
 		if (i != 0) m_pattern[i]->show();
 		pos += m_pattern[i]->screen_rect.width();
+		printf("pos=%d--------------\n", pos);
 	}
 
 	for (unsigned b = 0; b < sizeof(m_clear); b++)
@@ -370,7 +371,7 @@ void ApplicationWindow::updateScreen()
 {
 	QApplication::syncX();
 	QDesktopWidget *desktop = QApplication::desktop();
-	int screen_count = desktop->screenCount();
+	screen_count = desktop->screenCount();
 	int pos=0;
 	printf("screen_count=%d\n", screen_count);
 	for (int i=0; i<screen_count; i++) {

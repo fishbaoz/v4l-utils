@@ -234,16 +234,20 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	m_appWin->m_pattern[1]->screen_rect.setWidth(getw(dest_mode));
 	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
 	m_appWin->m_pattern[1]->screen_rect.setHeight(geth(dest_mode));
-	m_appWin->m_pattern[1]->screen_rect.setLeft(
-		m_appWin->m_pattern[0]->screen_rect.width()
-	);
+	printf("width1.2=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+	if (m_appWin->screen_count >= 2)
+		m_appWin->m_pattern[1]->screen_rect.setLeft(
+			m_appWin->m_pattern[0]->screen_rect.width()
+		);
 	
-	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
-	m_appWin->m_pattern[2]->screen_rect.setLeft(
-		m_appWin->m_pattern[0]->screen_rect.width() +
-		m_appWin->m_pattern[1]->screen_rect.width()
-	);
-	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+	printf("width1.3=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+	if (m_appWin->screen_count == 3) {
+		m_appWin->m_pattern[2]->screen_rect.setLeft(
+			m_appWin->m_pattern[0]->screen_rect.width() +
+			m_appWin->m_pattern[1]->screen_rect.width()
+		);
+	}
+	printf("width1.4=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
 	printf("1 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
 	
 	m_appWin->m_pattern[1]->updateScreen();

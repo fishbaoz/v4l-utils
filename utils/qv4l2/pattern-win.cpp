@@ -123,6 +123,7 @@ void PatternWin::updatePattern(int mode)
 	printf("width=%d, height=%d\n", screen_rect.width(), screen_rect.height());
 	QImage result = img->scaled(screen_rect.width(), screen_rect.height());
 	m_videoSurface->setPixmap(QPixmap::fromImage(result));
+	//m_vboxLayout->setPixmap(QPixmap::fromImage(result));
 }
 
 /* refresh after resolution is changed. */
@@ -130,13 +131,13 @@ void PatternWin::updateScreen()
 {
 	//screen_rect = desktop->screenGeometry(screen_num);
 //	m_image->scaled(screen_rect.width(), screen_rect.height());
-	buildWindow(m_videoSurface);
+	m_videoSurface->clear();
 	resize(screen_rect.width(), screen_rect.height());
+	buildWindow(m_videoSurface);
 	QImage result = m_image->scaled(screen_rect.width(), screen_rect.height());
 	m_videoSurface->setPixmap(QPixmap::fromImage(result));
-//	screen_rect = desktop->screenGeometry(screen_num);
+	//m_vboxLayout->setPixmap(QPixmap::fromImage(result));
 	move(screen_rect.left(), 0);
-
 }
 
 //void PatternWin::updateScreens()
@@ -145,7 +146,8 @@ void PatternWin::updateScreen()
 PatternWin::PatternWin(ApplicationWindow *aw, QDesktopWidget *d, int n) :
 	m_appWin(aw),
 	desktop(d),
-	screen_num(n)
+	screen_num(n),
+	m_vboxLayout(NULL)
 {
 	setWindowTitle("V4L2 Pattern");
 //	m_hotkeyClose = new QShortcut(Qt::CTRL+Qt::Key_W, this);
@@ -204,11 +206,15 @@ PatternWin::~PatternWin()
 void PatternWin::buildWindow(QWidget *videoSurface)
 {
 	int l, t, r, b;
-	if (m_vboxLayout)
+	bool first;
+	if (m_vboxLayout == NULL) {
+		first = true;
 		m_vboxLayout = new QVBoxLayout(this);
+	}
+
 	m_vboxLayout->getContentsMargins(&l, &t, &r, &b);
 	m_vboxLayout->setMargin(0);
-	m_vboxLayout->addWidget(videoSurface, 1000, Qt::AlignCenter);
+	if (first) m_vboxLayout->addWidget(videoSurface, 1000, Qt::AlignCenter);
 
 	setContextMenuPolicy(Qt::CustomContextMenu);
 	//connect(this, SIGNAL(customContextMenuRequested(QPoint)), SLOT(customMenuRequested(QPoint)));

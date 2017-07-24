@@ -112,7 +112,8 @@ public:
 	PatternWin *m_pattern[3];
 	bool enhanceVideoFlag;
 	void updateScreen();
-
+	
+	int screen_count;
 	// capturing
 private:
 	CaptureWin *m_capture;
