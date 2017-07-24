@@ -12,6 +12,70 @@ extern "C" {
 #include "xrandr.h"
 }
 
+int getw(char *mode)
+{
+	int ret;
+	char *beg = mode;
+	while(*mode != 'x')
+		mode ++;
+	*mode = '\n';
+	ret = atoi(beg);
+	printf("get w=%d\n", ret);
+	*mode = 'x';
+	return ret;
+}
+int geth(char *mode)
+{
+	int ret;
+	while(*mode != 'x')
+		mode ++;
+	mode ++;
+	ret = atoi(mode);
+	printf("get h=%d\n", ret);
+	return ret;
+}
+
+bool compare_widthxheight(char *r1, char *r2)
+{
+	printf("%s, %s\n", r1, r2);
+
+	int r1_w, r1_h, r2_w, r2_h;
+
+	r1_w = getw(r1);
+	r1_h = geth(r1);
+	r2_w = getw(r2);
+	r2_h = geth(r2);
+
+	printf("%d,%d,%d,%d,", r1_w, r1_h, r2_w, r2_h);
+	if (r1_w < r2_w)
+		return true;
+	else if (r1_w==r2_w && r1_h < r2_h)
+		return true;
+	else
+		return false;
+}
+void sort_xrandr(char xrandr[32][256])
+{
+	int i, j, num;
+	char temp[32];
+
+	for (i=0; i<32; i++) {
+		if (xrandr[i][0] == 0)
+			break;
+	}
+	num = i;
+	for (i=0; i<num; i++) {
+		for (j=i; j<num; j++) {
+			if (compare_widthxheight(xrandr[i], xrandr[j])) {
+				strcpy(temp, xrandr[i]);
+				strcpy(xrandr[i], xrandr[j]);
+				strcpy(xrandr[j], temp);
+			}
+		}
+	}
+}
+
+
 PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	m_appWin(aw)
 {
@@ -141,7 +205,9 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	memset(modes_table, 0, /* sizeof(modes_table)*/3*32*256   );
 	printf("sizeof argv=%d\n", sizeof(argv));
 	xrandr(3, argv, modes_table, modes_name);
+	sort_xrandr(modes_table[1]);
 	char *mode= &(modes_table[1][0][0]);
+	
 	printf("names=%s,%s, %s\n", modes_name[0], modes_name[1], modes_name[2]);
 	if (modes_name[1][0])
 		strcpy(m_appWin->m_pattern[1]->mode_name, modes_name[1]);
@@ -154,6 +220,7 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 
 		//for (;;);
 	mode = &(modes_table[2][0][0]);
+	sort_xrandr(modes_table[1]);
 	if (modes_name[2][0])
 		strcpy(m_appWin->m_pattern[2]->mode_name, modes_name[2]);
 	while (mode[0]) {
@@ -194,28 +261,7 @@ void PatternForm::patOutput2Changed(int mode)
 	m_appWin->m_pattern[2]->updatePattern(mode+1);
 }
 
-int getw(char *mode)
-{
-	int ret;
-	char *beg = mode;
-	while(*mode != 'x')
-		mode ++;
-	*mode = '\n';
-	ret = atoi(beg);
-	printf("get w=%d\n", ret);
-	*mode = 'x';
-	return ret;
-}
-int geth(char *mode)
-{
-	int ret;
-	while(*mode != 'x')
-		mode ++;
-	mode ++;
-	ret = atoi(mode);
-	printf("get h=%d\n", ret);
-	return ret;
-}
+
 void PatternForm::resolutionOutput1Changed(int mode)
 {
 //	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
