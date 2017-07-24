@@ -220,7 +220,7 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 
 		//for (;;);
 	mode = &(modes_table[2][0][0]);
-	sort_xrandr(modes_table[1]);
+	sort_xrandr(modes_table[2]);
 	if (modes_name[2][0])
 		strcpy(m_appWin->m_pattern[2]->mode_name, modes_name[2]);
 	while (mode[0]) {
