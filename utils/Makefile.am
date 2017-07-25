@@ -12,16 +12,15 @@ SUBDIRS = \
 	v4l2-ctl \
 	v4l2-dbg \
 	v4l2-sysfs-path \
-	cec-ctl \
-	rds-ctl
+	cec-ctl
 
 if LINUX_OS
 SUBDIRS += \
 	xc3028-firmware
 
 if HAVE_LINUX_I2C_DEV
-SUBDIRS += \
-	rds
+#SUBDIRS += \
+#	rds
 endif
 endif
 
