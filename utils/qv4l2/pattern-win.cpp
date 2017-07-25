@@ -93,8 +93,11 @@ void PatternWin::updatePattern(int mode)
 {
 	QImage* img=new QImage;
 	m_videoSurface->clear();
+	QString numString;
+	numString.setNum(mode, 10);
 
 //	mode ++;
+	#if 0
 	switch (mode) {
 	case 1:
 		if(! ( img->load("mode1.png") ) ) {
@@ -118,6 +121,14 @@ void PatternWin::updatePattern(int mode)
 		}
 		break;
 	}
+	#else
+	if(! ( img->load("modes/mode" + numString + ".png") ) ) {
+		qDebug("load image failed\n");
+		delete img;
+		return;
+	}
+
+	#endif
 	m_image = img;
 	screen_rect = desktop->screenGeometry(screen_num); //TODO:
 	printf("width=%d, height=%d\n", screen_rect.width(), screen_rect.height());

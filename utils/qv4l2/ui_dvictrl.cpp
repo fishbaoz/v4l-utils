@@ -173,14 +173,28 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
         sequencetabWidget->setCurrentIndex(0);
         modetabWidget->setCurrentIndex(1);
 
-	mode1_comboBox->addItem(tr("模式1"));
-	mode1_comboBox->addItem(tr("模式2"));
-	mode1_comboBox->addItem(tr("模式3"));
+	QString mode_name("模式"), numString, modefile_name("modes/mode");
+	int num;
+	QFile mode_file;
+
+	for (num=1; num<=255; num++) {
+		numString.setNum(num, 10);
+		//modefile_name.append(numString);
+		mode_file.setFileName(modefile_name+numString+".png");
+		if (mode_file.exists()) {
+			mode1_comboBox->addItem(mode_name+numString);
+			mode2_comboBox->addItem(mode_name+numString);
+		} else
+			break;
+	}
+	//mode1_comboBox->addItem(tr("模式1"));
+	//mode1_comboBox->addItem(tr("模式2"));
+	//mode1_comboBox->addItem(tr("模式3"));
 	connect(mode1_comboBox, SIGNAL(activated(int)), SLOT(patOutput1Changed(int)));
 
-	mode2_comboBox->addItem("模式1");
-	mode2_comboBox->addItem("模式2");
-	mode2_comboBox->addItem("模式3");
+	//mode2_comboBox->addItem("模式1");
+	//mode2_comboBox->addItem("模式2");
+	//mode2_comboBox->addItem("模式3");
 	connect(mode2_comboBox, SIGNAL(activated(int)), SLOT(patOutput2Changed(int)));
 #if 0
 	Display *dpy = XOpenDisplay(NULL);
