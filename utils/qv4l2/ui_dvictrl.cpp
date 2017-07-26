@@ -95,22 +95,22 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
         label_3->setGeometry(QRect(0, 20, 71, 17));
         label_4 = new QLabel(dvi1_seqtab);
         label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setGeometry(QRect(-3, 70, 91, 20));
+        label_4->setGeometry(QRect(-3, 70, 81, 20));
         sequencetabWidget->addTab(dvi1_seqtab, QString());
         dvi2_seqtab = new QWidget();
         dvi2_seqtab->setObjectName(QString::fromUtf8("dvi2_seqtab"));
         label_6 = new QLabel(dvi2_seqtab);
         label_6->setObjectName(QString::fromUtf8("label_6"));
-        label_6->setGeometry(QRect(10, 20, 68, 17));
+        label_6->setGeometry(QRect(0, 20, 68, 17));
         label_7 = new QLabel(dvi2_seqtab);
         label_7->setObjectName(QString::fromUtf8("label_7"));
-        label_7->setGeometry(QRect(10, 60, 68, 17));
+        label_7->setGeometry(QRect(0, 70, 81, 17));
         resolution2_comboBox = new QComboBox(dvi2_seqtab);
         resolution2_comboBox->setObjectName(QString::fromUtf8("resolution2_comboBox"));
-        resolution2_comboBox->setGeometry(QRect(110, 20, 85, 27));
+        resolution2_comboBox->setGeometry(QRect(90, 20, 131, 27));
         refreshrate2_comboBox = new QComboBox(dvi2_seqtab);
         refreshrate2_comboBox->setObjectName(QString::fromUtf8("refreshrate2_comboBox"));
-        refreshrate2_comboBox->setGeometry(QRect(110, 60, 85, 27));
+        refreshrate2_comboBox->setGeometry(QRect(90, 70, 131, 27));
         sequencetabWidget->addTab(dvi2_seqtab, QString());
         modetabWidget = new QTabWidget(parent);
         modetabWidget->setObjectName(QString::fromUtf8("modetabWidget"));
@@ -128,15 +128,16 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
         dvi2_modetab->setObjectName(QString::fromUtf8("dvi2_modetab"));
         label_8 = new QLabel(dvi2_modetab);
         label_8->setObjectName(QString::fromUtf8("label_8"));
-        label_8->setGeometry(QRect(10, 40, 68, 17));
+        label_8->setGeometry(QRect(10, 30, 68, 17));
         mode2_comboBox = new QComboBox(dvi2_modetab);
         mode2_comboBox->setObjectName(QString::fromUtf8("mode2_comboBox"));
-        mode2_comboBox->setGeometry(QRect(90, 30, 85, 27));
+        mode2_comboBox->setGeometry(QRect(90, 20, 111, 27));
         modetabWidget->addTab(dvi2_modetab, QString());
         label = new QLabel(parent);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(50, 200, 68, 17));
-        label_2 = new QLabel(parent);
+
+	label_2 = new QLabel(parent);
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(60, 10, 81, 17));
 
