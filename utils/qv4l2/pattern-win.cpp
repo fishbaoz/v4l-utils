@@ -144,11 +144,11 @@ void PatternWin::updateScreen()
 //	m_image->scaled(screen_rect.width(), screen_rect.height());
 	m_videoSurface->clear();
 	resize(screen_rect.width(), screen_rect.height());
+	move(screen_rect.left(), 0);
 	buildWindow(m_videoSurface);
 	QImage result = m_image->scaled(screen_rect.width(), screen_rect.height());
 	m_videoSurface->setPixmap(QPixmap::fromImage(result));
 	//m_vboxLayout->setPixmap(QPixmap::fromImage(result));
-	move(screen_rect.left(), 0);
 }
 
 //void PatternWin::updateScreens()
@@ -225,6 +225,7 @@ void PatternWin::buildWindow(QWidget *videoSurface)
 
 	m_vboxLayout->getContentsMargins(&l, &t, &r, &b);
 	m_vboxLayout->setMargin(0);
+	m_vboxLayout->setSpacing(0);
 	if (first) m_vboxLayout->addWidget(videoSurface, 1000, Qt::AlignCenter);
 
 	setContextMenuPolicy(Qt::CustomContextMenu);
