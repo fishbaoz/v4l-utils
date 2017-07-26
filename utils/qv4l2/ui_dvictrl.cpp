@@ -79,17 +79,17 @@ void sort_xrandr(char xrandr[32][256])
 PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	m_appWin(aw)
 {
-	sequencetabWidget = new QTabWidget(parent);
+        sequencetabWidget = new QTabWidget(parent);
         sequencetabWidget->setObjectName(QString::fromUtf8("sequencetabWidget"));
-        sequencetabWidget->setGeometry(QRect(50, 50, 241, 131));
+        sequencetabWidget->setGeometry(QRect(40, 50, 251, 151));
         dvi1_seqtab = new QWidget();
         dvi1_seqtab->setObjectName(QString::fromUtf8("dvi1_seqtab"));
         resolution1_comboBox = new QComboBox(dvi1_seqtab);
         resolution1_comboBox->setObjectName(QString::fromUtf8("resolution1_comboBox"));
-        resolution1_comboBox->setGeometry(QRect(110, 20, 85, 27));
+        resolution1_comboBox->setGeometry(QRect(90, 20, 131, 27));
         refreshrate1_comboBox = new QComboBox(dvi1_seqtab);
         refreshrate1_comboBox->setObjectName(QString::fromUtf8("refreshrate1_comboBox"));
-        refreshrate1_comboBox->setGeometry(QRect(110, 70, 85, 27));
+        refreshrate1_comboBox->setGeometry(QRect(90, 70, 131, 27));
         label_3 = new QLabel(dvi1_seqtab);
         label_3->setObjectName(QString::fromUtf8("label_3"));
         label_3->setGeometry(QRect(0, 20, 71, 17));
@@ -114,12 +114,12 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
         sequencetabWidget->addTab(dvi2_seqtab, QString());
         modetabWidget = new QTabWidget(parent);
         modetabWidget->setObjectName(QString::fromUtf8("modetabWidget"));
-        modetabWidget->setGeometry(QRect(50, 240, 241, 131));
+        modetabWidget->setGeometry(QRect(40, 240, 251, 131));
         dvi1_modetab = new QWidget();
         dvi1_modetab->setObjectName(QString::fromUtf8("dvi1_modetab"));
         mode1_comboBox = new QComboBox(dvi1_modetab);
         mode1_comboBox->setObjectName(QString::fromUtf8("mode1_comboBox"));
-        mode1_comboBox->setGeometry(QRect(80, 20, 85, 27));
+        mode1_comboBox->setGeometry(QRect(90, 20, 131, 27));
         label_5 = new QLabel(dvi1_modetab);
         label_5->setObjectName(QString::fromUtf8("label_5"));
         label_5->setGeometry(QRect(20, 20, 41, 21));
