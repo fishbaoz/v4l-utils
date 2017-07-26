@@ -312,7 +312,8 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	printf("1 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
 	
 	m_appWin->m_pattern[1]->updateScreen();
-	m_appWin->m_pattern[2]->updateScreen();
+	if (m_appWin->screen_count == 3)
+		m_appWin->m_pattern[2]->updateScreen();
 	//patOutput1Changed(1);
 }
 
@@ -337,7 +338,8 @@ void PatternForm::resolutionOutput2Changed(int mode)
 	printf("2 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
 	
 	m_appWin->m_pattern[1]->updateScreen();
-	m_appWin->m_pattern[2]->updateScreen();
+	if (m_appWin->screen_count >= 2)
+		m_appWin->m_pattern[2]->updateScreen();
 	//m_appWin->m_pattern[2]->updateScreen();
 	//m_appWin->updateScreen();
 	//patOutput2Changed(1);

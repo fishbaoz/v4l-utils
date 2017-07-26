@@ -365,7 +365,7 @@ ApplicationWindow::ApplicationWindow() :
 ApplicationWindow::~ApplicationWindow()
 {
 	delete m_pattern[1];
-	delete m_pattern[2];
+	if (screen_count == 3) delete m_pattern[2];
 	closeDevice();
 }
 
