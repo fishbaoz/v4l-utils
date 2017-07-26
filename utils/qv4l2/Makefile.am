@@ -30,7 +30,7 @@ EXTRA_DIST = enterbutt.png exit.png fileopen.png qv4l2_24x24.png qv4l2_64x64.png
   qv4l2.qrc saveraw.png qv4l2.pro qv4l2.1 fullscreenexit.png fullscreen.png start.png step.png
 
 clean-local:
-	-rm -vf moc_*.cpp qrc_*.cpp qrc_*.o ui_*.h
+	-rm -vf moc_*.cpp qrc_*.cpp qrc_*.o
 
 # Call the moc preprocessor
 moc_qv4l2.cpp: $(srcdir)/qv4l2.h
