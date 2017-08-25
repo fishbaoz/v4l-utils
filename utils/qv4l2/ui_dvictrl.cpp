@@ -267,13 +267,15 @@ PatternForm::~PatternForm()
 void PatternForm::patOutput1Changed(int mode)
 {
 //	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
-	m_appWin->m_pattern[1]->updatePattern(mode+1);
+	if (m_appWin->screen_count >= 2)
+		m_appWin->m_pattern[1]->updatePattern(mode+1);
 }
 
 void PatternForm::patOutput2Changed(int mode)
 {
 //	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
-	m_appWin->m_pattern[2]->updatePattern(mode+1);
+	if (m_appWin->screen_count == 3)
+		m_appWin->m_pattern[2]->updatePattern(mode+1);
 }
 
 
