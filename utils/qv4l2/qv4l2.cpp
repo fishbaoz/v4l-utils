@@ -454,9 +454,11 @@ void ApplicationWindow::setDevice(const QString &device, bool rawOpen)
 #ifdef HAVE_ALSA
 		m_audioBufferAct->setEnabled(false);
 #endif
+		has_device = false;
 		return;
 	}
 
+	has_device = true;
 	newCaptureWin();
 
 	QWidget *w = new QWidget(m_tabs);
@@ -1977,6 +1979,7 @@ int main(int argc, char **argv)
 	g_mw->setDevice(device, raw);
 	g_mw->showFullScreen();
 	a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
-	g_mw->m_capStartAct->toggle();
+	if (g_mw->has_device)
+		g_mw->m_capStartAct->toggle();
 	return a.exec();
 }

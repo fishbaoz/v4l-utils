@@ -114,6 +114,7 @@ public:
 	void updateScreen();
 	
 	int screen_count;
+	bool has_device;
 	// capturing
 private:
 	CaptureWin *m_capture;
