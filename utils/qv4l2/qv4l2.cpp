@@ -207,7 +207,8 @@ ApplicationWindow::ApplicationWindow() :
 	toolBar->addAction(m_capStartAct);
 	toolBar->addAction(m_capStepAct);
 	toolBar->addAction(m_snapshotAct);
-	toolBar->addAction(m_saveRawAct);
+//	toolBar->addAction(m_saveRawAct);
+	toolBar->addAction(quitAct);
 
 	m_scalingAct = new QAction("&Enable Video Scaling", this);
 	m_scalingAct->setStatusTip("Scale video frames to match window size if set");
@@ -317,7 +318,7 @@ ApplicationWindow::ApplicationWindow() :
 	m_makeFullScreenAct->setCheckable(true);
 	connect(m_makeFullScreenAct, SIGNAL(toggled(bool)), this, SLOT(makeFullScreen(bool)));
 	m_capMenu->addAction(m_makeFullScreenAct);
-	toolBar->addAction(m_makeFullScreenAct);
+//	toolBar->addAction(m_makeFullScreenAct);
 
 #ifdef HAVE_ALSA
 	m_capMenu->addSeparator();
@@ -333,7 +334,7 @@ ApplicationWindow::ApplicationWindow() :
 
 	QAction *whatAct = QWhatsThis::createAction(this);
 	helpMenu->addAction(whatAct);
-	toolBar->addAction(whatAct);
+//	toolBar->addAction(whatAct);
 
 	statusBar()->showMessage("Ready", 2000);
 
