@@ -353,8 +353,8 @@ void PatternForm::refreshOutput1Changed(int rate)
 	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[1]->mode_name, "--rate", dest_rate, NULL};
   	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_rate, qPrintable(refreshrate1_comboBox->currentText()));
-	xrandr(7, argv, NULL, NULL);
-	
+	if (m_appWin->screen_count >= 2)
+		xrandr(7, argv, NULL, NULL);
 }
 
 void PatternForm::refreshOutput2Changed(int rate)
@@ -363,5 +363,6 @@ void PatternForm::refreshOutput2Changed(int rate)
 	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[2]->mode_name, "--rate", dest_rate, NULL};
   	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_rate, qPrintable(refreshrate2_comboBox->currentText()));
-	xrandr(7, argv, NULL, NULL);
+	if (m_appWin->screen_count == 3)
+		xrandr(7, argv, NULL, NULL);
 }
