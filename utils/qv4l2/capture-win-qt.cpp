@@ -20,6 +20,20 @@
 #include "capture-win-qt.h"
 #include "laplacian.h"
 
+#include "opencv2/opencv.hpp"
+
+using namespace cv;
+using namespace std;
+#include "dehaze_core.h"
+
+Mat M;
+Mat M_max;
+Mat M_ave;
+Mat L;
+Mat dst;
+double m_av, A;
+
+
 CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	CaptureWin(aw),
 	m_image(new QImage(0, 0, QImage::Format_Invalid)),
@@ -75,6 +89,32 @@ void CaptureWinQt::setRenderFrame()
 	paintFrame();
 }
 
+void init_buffer(int height, int width)
+{
+	Mat TM(height, width, CV_8UC1, Scalar::all(0));
+	Mat TM_max(height, width, CV_8UC1, Scalar::all(0));
+	Mat TM_ave(height, width, CV_8UC1, Scalar::all(0));
+	Mat TL(height, width, CV_8UC1, Scalar::all(0));
+	Mat Tdst(height, width, CV_8UC3, Scalar::all(0));
+
+	TM.copyTo(M);
+	TM_max.copyTo(M_max);
+	TM_ave.copyTo(M_ave);
+	TL.copyTo(L);
+	Tdst.copyTo(dst);
+}
+
+int dehaze_core(Mat &src, unsigned char *data)
+{
+	getM(M, M_max, src, m_av);
+	getAveM(M_ave, M, r);
+	getL(L, M, M_ave, eps, m_av);
+	A = GetA(M_max, M_ave);
+	dehaze(data, src, L, A);
+
+	return 0;
+}
+
 void CaptureWinQt::paintFrame()
 {
 	if (m_crop.updated) {
@@ -101,10 +141,12 @@ void CaptureWinQt::paintFrame()
 	m_filled = false;
 
 	unsigned char *data = (m_data == NULL) ? m_image->bits() : m_data;
-//	printf("format=%x, h=%d, w=%d\n", m_image->format(), m_image->height(), m_image->width());
+//	printf("format=%x, h=%d, w=%d, data=%x\n", m_image->format(), m_image->height(), m_image->width(), data);
 
-	cv::Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
+
 	if (m_appWin->enhanceVideoFlag) {
+	Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
+	init_buffer(m_image->height(), m_image->width());
 	//	edgeEnhance(src, dst);
 	//	cv::imwrite("capture.jpg", src);
 	//	cvtColor(src, gray, CV_BGR2GRAY);
@@ -112,8 +154,11 @@ void CaptureWinQt::paintFrame()
 	//	cv::imwrite("gray.jpg", gray);
 	//	data = gray.data;
 	//	dst.convertTo(dst, CV_8UC3);
-		sharpenImage2(src,dst);
-		data = dst.data;
+	//	sharpenImage2(src,dst);
+	//	data = dst.data;
+
+		dehaze_core(src, data);
+//		data = dst.data;
 	}
 	QImage displayFrame(&data[m_cropOffset],
 			    m_crop.size.width(), m_crop.size.height(),
