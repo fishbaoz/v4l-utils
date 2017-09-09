@@ -19,7 +19,7 @@ qv4l2_CPPFLAGS += $(QT_CFLAGS)
 qv4l2_LDFLAGS = $(QT_LIBS)
 endif
 
-qv4l2_CPPFLAGS += $(ALSA_CFLAGS) -DGIT_VERSION="\"$(GIT_VERSION)\""
+qv4l2_CPPFLAGS += $(ALSA_CFLAGS) -DGIT_VERSION="\"$(GIT_VERSION)\"" -I/opt/AMDAPP/include
 qv4l2_LDFLAGS += $(ALSA_LIBS) -pthread
 
 qv4l2_LDFLAGS += -lXrandr -lX11 -lm -lOpenCL -L/opt/AMDAPP/lib/x86_64/sdk

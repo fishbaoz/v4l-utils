@@ -130,7 +130,7 @@ ApplicationWindow::ApplicationWindow() :
 		m_pattern[i]->screen_rect.setLeft(pos);
 		#endif
 		//m_pattern[i]->move(0, 0);
-		if (i != 0) m_pattern[i]->show();
+		if (i != 0) m_pattern[i]->showFullScreen();
 		pos += m_pattern[i]->screen_rect.width();
 		printf("pos=%d--------------\n", pos);
 	}
@@ -387,7 +387,7 @@ void ApplicationWindow::updateScreen()
 		m_pattern[i]->move(pos, 0);
 		#endif
 		//m_pattern[i]->move(0, 0);
-		if (i != 0) m_pattern[i]->show();
+		if (i != 0) m_pattern[i]->showFullScreen();
 		pos += m_pattern[i]->screen_rect.width();
 	}
 
