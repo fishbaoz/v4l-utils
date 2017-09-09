@@ -49,14 +49,12 @@ cl_int ExecuteKernel(CommandQueue *commandqueue, Kernel *kernel, size_t *global_
 
 void CleanUp(Context context, CommandQueue commandqueue, Program program, 	Kernel kernel);
 
- void printMat(char *imgname, Mat m);
- void printMatInfo(Mat *m);
- Mat read_image(char *imagename);
+void printMat(char *imgname, Mat m);
+void printMatInfo(Mat *m);
+Mat read_image(char *imagename);
 
 double getAve(unsigned char *M, int height, int width);
 int MaxMatrix(unsigned char *src, int height, int width);
 double GetA(unsigned char *M_max, unsigned char *M_ave, int height, int width);
-
-
 
 #endif

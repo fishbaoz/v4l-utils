@@ -24,15 +24,36 @@
 
 using namespace cv;
 using namespace std;
-#include "dehaze_core.h"
+#include "dehaze_core_opencl.h"
 
+#if 0
 Mat M;
 Mat M_max;
 Mat M_ave;
 Mat L;
 Mat dst;
 double m_av, A;
+#else
+float g_fps = 0;
+clock_t g_time = 0;
+clock_t g_lastTime = 0;
+Context context;
+CommandQueue commandqueue;
+Program program;
 
+Kernel getM_kernel = NULL;
+Kernel box_filter_horizontal_kernel = NULL;
+Kernel box_filter_vertical_kernel = NULL;
+Kernel getL_kernel = NULL;
+Kernel getTable_kernel = NULL;
+Kernel dehaze_kernel = NULL;
+unsigned char *gpu_image = NULL;
+cl_mem M, M_max, M_temp, M_ave, L, dst;
+
+#define GROUPSIZE 256
+#define R 31
+
+#endif
 
 CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	CaptureWin(aw),
@@ -88,7 +109,7 @@ void CaptureWinQt::setRenderFrame()
 
 	paintFrame();
 }
-
+#if 0
 void init_buffer(int height, int width)
 {
 	Mat TM(height, width, CV_8UC1, Scalar::all(0));
@@ -103,17 +124,139 @@ void init_buffer(int height, int width)
 	TL.copyTo(L);
 	Tdst.copyTo(dst);
 }
-
+#endif
 int dehaze_core(Mat &src, unsigned char *data)
 {
+	#if 0
 	getM(M, M_max, src, m_av);
 	getAveM(M_ave, M, r);
 	getL(L, M, M_ave, eps, m_av);
 	A = GetA(M_max, M_ave);
 	dehaze(data, src, L, A);
-
+	#endif
 	return 0;
 }
+
+void init_cl()
+{
+	context = CreateContext(GPU);
+	CheckErr((context).context != NULL,"Create context failed");
+	commandqueue = CreateCommandQueue(context);
+	CheckErr(commandqueue != NULL, "Create command queue failed");
+	program = CreateProgram(kernel_file, &context);
+	CheckErr(program != NULL, "CreateProgram");
+	CreateKernel(&getM_kernel, &program, "getM");
+	CreateKernel(&box_filter_horizontal_kernel, &program, "box_filter_horizontal");
+	CreateKernel(&box_filter_vertical_kernel, &program, "box_filter_vertical");
+	CreateKernel(&getL_kernel, &program, "getL");
+	CreateKernel(&dehaze_kernel, &program, "dehaze");
+	return ;
+}
+
+unsigned char *dehaze_core(unsigned char *data, int height, int width)
+{
+
+	int size = height * width;
+	cl_mem src;
+	cl_int errNum;
+	src = clCreateBuffer(context.context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, size * 3 * sizeof(unsigned char), data, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clCreateBuffer for src");
+	errNum  = clSetKernelArg(getM_kernel, 0, sizeof(cl_mem), &M);
+	errNum |= clSetKernelArg(getM_kernel, 1, sizeof(cl_mem), &M_max);
+	errNum |= clSetKernelArg(getM_kernel, 2, sizeof(cl_mem), &src);
+	CheckErr(errNum == CL_SUCCESS, "clSetKernelArg for getM_kernel");
+	size_t globalWorkSize[2] = {(size_t)width, (size_t)height};
+	size_t localWorkSize[2] = {256, 1};
+	errNum = clEnqueueNDRangeKernel(commandqueue, getM_kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueNDRange for getM_kernel");
+	clFinish(commandqueue);
+
+
+	errNum = clSetKernelArg(box_filter_horizontal_kernel, 0, sizeof(cl_mem), &M);
+	errNum |= clSetKernelArg(box_filter_horizontal_kernel, 1, sizeof(cl_mem), &M_temp);
+	errNum |= clSetKernelArg(box_filter_horizontal_kernel, 2, sizeof(unsigned char)*(GROUPSIZE+R-1), 0);
+	CheckErr(errNum == CL_SUCCESS, "clSetKenrelArg for box_filter_horizontal_kernel");
+	errNum = clEnqueueNDRangeKernel(commandqueue, box_filter_horizontal_kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueNDRange for box_filter_horizontal_kernel");
+	clFinish(commandqueue);
+
+	errNum = clSetKernelArg(box_filter_vertical_kernel, 0, sizeof(cl_mem), &M_temp);
+	errNum |= clSetKernelArg(box_filter_vertical_kernel, 1, sizeof(cl_mem), &M_ave);
+	CheckErr(errNum == CL_SUCCESS, "clSetKenrelArg for box_filter_vertical_kernel");
+	errNum = clEnqueueNDRangeKernel(commandqueue, box_filter_vertical_kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueNDRange for box_filter_vertical_kernel");
+	clFlush(commandqueue);
+
+	unsigned char*M_gpu;
+	double M_av = 0;
+	M_gpu = (unsigned char*)clEnqueueMapBuffer(commandqueue, M, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0, size*sizeof(unsigned char), 0, NULL, NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueMapBuffer for M_gpu");
+	M_av = getAve(M_gpu, height, width);
+	errNum = clEnqueueUnmapMemObject(commandqueue, M, M_gpu, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueUnmapMemObject for M");
+	clFinish(commandqueue);
+
+	errNum = clSetKernelArg(getL_kernel, 0, sizeof(cl_mem), &L);
+	errNum |= clSetKernelArg(getL_kernel, 1, sizeof(cl_mem), &M);
+	errNum |= clSetKernelArg(getL_kernel, 2, sizeof(cl_mem), &M_ave);
+	errNum |= clSetKernelArg(getL_kernel, 3, sizeof(double), &M_av);
+	CheckErr(errNum == CL_SUCCESS, "clSetKenrelArg for getL_kernel");
+	errNum = clEnqueueNDRangeKernel(commandqueue, getL_kernel, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueNDRange for getL_kernel");
+	clFlush(commandqueue);
+
+	unsigned char*M_max_gpu, *M_ave_gpu;
+	M_max_gpu = (unsigned char*)clEnqueueMapBuffer(commandqueue, M_max, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0, size*sizeof(unsigned char), 0, NULL, NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueMapBuffer for M_max_gpu");
+	M_ave_gpu = (unsigned char*)clEnqueueMapBuffer(commandqueue, M_ave, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0, size*sizeof(unsigned char), 0, NULL, NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueMapBuffer for M_ave_gpu");
+	double A = 0;
+	A = GetA(M_max_gpu, M_ave_gpu, height, width);
+	errNum = clEnqueueUnmapMemObject(commandqueue, M_ave, M_ave_gpu, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueUnmapMemObject for M_ave");
+	errNum = clEnqueueUnmapMemObject(commandqueue, M_max, M_max_gpu, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueUnmapMemObject for M_max");
+	clFinish(commandqueue);
+
+	errNum = clSetKernelArg(dehaze_kernel, 0, sizeof(cl_mem), &dst);
+	errNum |= clSetKernelArg(dehaze_kernel, 1, sizeof(cl_mem), &src);
+	errNum |= clSetKernelArg(dehaze_kernel, 2, sizeof(cl_mem), &L);
+	errNum |= clSetKernelArg(dehaze_kernel, 3, sizeof(double), &A);
+	CheckErr(errNum == CL_SUCCESS, "clSetKenrelArg for dehaze_kernel");
+	errNum = clEnqueueNDRangeKernel(commandqueue, dehaze_kernel, 2, NULL, globalWorkSize,localWorkSize, 0, NULL, NULL);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueNDRange for dehaze_kernel");
+	clFinish(commandqueue);
+
+	unsigned char *dst_gpu = NULL;
+	dst_gpu = (unsigned char*)clEnqueueMapBuffer(commandqueue, dst, CL_TRUE, CL_MAP_READ | CL_MAP_WRITE, 0, size*3*sizeof(unsigned char), 0, NULL, NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clEnqueueMapBuffer for dst_gpu");
+
+	clReleaseMemObject(src);
+
+	return dst_gpu;
+}
+
+void free_cl()
+{
+	clReleaseContext(context.context);
+	clReleaseCommandQueue(commandqueue);
+	clReleaseProgram(program);
+	clReleaseMemObject(dst);
+	clReleaseKernel(dehaze_kernel);
+	clReleaseMemObject(L);
+	clReleaseKernel(getL_kernel);
+	clReleaseMemObject(M_ave);
+	clReleaseKernel(box_filter_vertical_kernel);
+	clReleaseMemObject(M_temp);
+	clReleaseKernel(box_filter_horizontal_kernel);
+	clReleaseMemObject(M);
+	clReleaseMemObject(M_max);
+	clReleaseKernel(getM_kernel);
+	free(gpu_image);
+	return ;
+}
+
+
 
 void CaptureWinQt::paintFrame()
 {
@@ -145,8 +288,8 @@ void CaptureWinQt::paintFrame()
 
 
 	if (m_appWin->enhanceVideoFlag) {
-	Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
-	init_buffer(m_image->height(), m_image->width());
+		//Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
+		//init_buffer(m_image->height(), m_image->width());
 	//	edgeEnhance(src, dst);
 	//	cv::imwrite("capture.jpg", src);
 	//	cvtColor(src, gray, CV_BGR2GRAY);
@@ -157,7 +300,8 @@ void CaptureWinQt::paintFrame()
 	//	sharpenImage2(src,dst);
 	//	data = dst.data;
 
-		dehaze_core(src, data);
+//		dehaze_core(src, data);
+		data = dehaze_core(data, m_image->height(), m_image->width());
 //		data = dst.data;
 	}
 	QImage displayFrame(&data[m_cropOffset],
