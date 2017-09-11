@@ -55,6 +55,9 @@ cl_mem M, M_max, M_temp, M_ave, L, dst;
 
 #endif
 
+void init_cl();
+void create_buffer(int size);
+
 CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	CaptureWin(aw),
 	m_image(new QImage(0, 0, QImage::Format_Invalid)),
@@ -65,6 +68,8 @@ CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	m_cropOffset(0)
 {
 	m_videoSurface = new QLabel(this);
+	init_cl();
+	create_buffer(1920*1080);
 	CaptureWin::buildWindow(m_videoSurface);
 }
 
@@ -150,6 +155,28 @@ void init_cl()
 	CreateKernel(&box_filter_vertical_kernel, &program, "box_filter_vertical");
 	CreateKernel(&getL_kernel, &program, "getL");
 	CreateKernel(&dehaze_kernel, &program, "dehaze");
+	return ;
+}
+
+void create_buffer(int size)
+
+{
+	cl_int errNum;
+	gpu_image = (unsigned char *)malloc(size* 3 * sizeof(unsigned char));
+	assert(gpu_image);
+	M = clCreateBuffer(context.context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, (size)*sizeof(unsigned char), NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS,"clCreateBuffer for M");
+	M_max = clCreateBuffer(context.context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, (size)*sizeof(unsigned char), NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS,"clCreateBuffer for M_max");
+	M_temp = clCreateBuffer(context.context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, (size) * sizeof(unsigned char), NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clCreateBuffer for M_temp");
+	M_ave = clCreateBuffer(context.context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, (size) * sizeof(unsigned char), NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clCreateBuffer for M_ave");
+	L = clCreateBuffer(context.context, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, (size)*sizeof(unsigned char), NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clCreateBuffer for L");
+	dst = clCreateBuffer(context.context, CL_MEM_WRITE_ONLY | CL_MEM_ALLOC_HOST_PTR, (size*3)*sizeof(unsigned char), NULL, &errNum);
+	CheckErr(errNum == CL_SUCCESS, "clCreateBuffer for dst");
+
 	return ;
 }
 
