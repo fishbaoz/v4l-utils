@@ -24,9 +24,11 @@
 
 using namespace cv;
 using namespace std;
-#include "dehaze_core_opencl.h"
 
-#if 0
+/* also need to change the Makefile.am */
+#define _USE_OPENCL_ 0
+#if !_USE_OPENCL_
+#include "dehaze_core.h"
 Mat M;
 Mat M_max;
 Mat M_ave;
@@ -34,6 +36,7 @@ Mat L;
 Mat dst;
 double m_av, A;
 #else
+#include "dehaze_core_opencl.h"
 float g_fps = 0;
 clock_t g_time = 0;
 clock_t g_lastTime = 0;
@@ -57,6 +60,7 @@ cl_mem M, M_max, M_temp, M_ave, L, dst;
 
 void init_cl();
 void create_buffer(int size);
+void init_buffer(int height, int width);
 
 CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	CaptureWin(aw),
@@ -68,8 +72,12 @@ CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	m_cropOffset(0)
 {
 	m_videoSurface = new QLabel(this);
+	#if _USE_OPENCL_
 	init_cl();
-	create_buffer(1920*1080);
+	create_buffer(1280*720);
+	#else
+	init_buffer(720, 1280);
+	#endif
 	CaptureWin::buildWindow(m_videoSurface);
 }
 
@@ -114,7 +122,7 @@ void CaptureWinQt::setRenderFrame()
 
 	paintFrame();
 }
-#if 0
+#if !_USE_OPENCL_
 void init_buffer(int height, int width)
 {
 	Mat TM(height, width, CV_8UC1, Scalar::all(0));
@@ -129,19 +137,20 @@ void init_buffer(int height, int width)
 	TL.copyTo(L);
 	Tdst.copyTo(dst);
 }
-#endif
 int dehaze_core(Mat &src, unsigned char *data)
 {
-	#if 0
+	#if !_USE_OPENCL_
 	getM(M, M_max, src, m_av);
 	getAveM(M_ave, M, r);
-	getL(L, M, M_ave, eps, m_av);
-	A = GetA(M_max, M_ave);
-	dehaze(data, src, L, A);
+//	getL(L, M, M_ave, eps, m_av);
+//	A = GetA(M_max, M_ave);
+//	dehaze(data, src, L, A);
 	#endif
 	return 0;
 }
+#endif
 
+#if _USE_OPENCL_
 void init_cl()
 {
 	context = CreateContext(GPU);
@@ -282,7 +291,7 @@ void free_cl()
 	free(gpu_image);
 	return ;
 }
-
+#endif
 
 
 void CaptureWinQt::paintFrame()
@@ -311,12 +320,15 @@ void CaptureWinQt::paintFrame()
 	m_filled = false;
 
 	unsigned char *data = (m_data == NULL) ? m_image->bits() : m_data;
-//	printf("format=%x, h=%d, w=%d, data=%x\n", m_image->format(), m_image->height(), m_image->width(), data);
+	printf("format=%x, h=%d, w=%d, data=%x\n", m_image->format(), m_image->height(), m_image->width(), data);
 
 
 	if (m_appWin->enhanceVideoFlag) {
-		//Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
-		//init_buffer(m_image->height(), m_image->width());
+		#if _USE_OPENCL_
+		data = dehaze_core(data, m_image->height(), m_image->width());
+		#else
+		Mat src(m_image->height(), m_image->width(), CV_8UC3, data), dst, gray;
+	//	init_buffer(m_image->height(), m_image->width());
 	//	edgeEnhance(src, dst);
 	//	cv::imwrite("capture.jpg", src);
 	//	cvtColor(src, gray, CV_BGR2GRAY);
@@ -327,9 +339,9 @@ void CaptureWinQt::paintFrame()
 	//	sharpenImage2(src,dst);
 	//	data = dst.data;
 
-//		dehaze_core(src, data);
-		data = dehaze_core(data, m_image->height(), m_image->width());
+		dehaze_core(src, data);
 //		data = dst.data;
+		#endif
 	}
 	QImage displayFrame(&data[m_cropOffset],
 			    m_crop.size.width(), m_crop.size.height(),
