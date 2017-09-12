@@ -142,9 +142,9 @@ int dehaze_core(Mat &src, unsigned char *data)
 	#if !_USE_OPENCL_
 	getM(M, M_max, src, m_av);
 	getAveM(M_ave, M, r);
-//	getL(L, M, M_ave, eps, m_av);
-//	A = GetA(M_max, M_ave);
-//	dehaze(data, src, L, A);
+	getL(L, M, M_ave, eps, m_av);
+	A = GetA(M_max, M_ave);
+	dehaze(data, src, L, A);
 	#endif
 	return 0;
 }
@@ -320,7 +320,7 @@ void CaptureWinQt::paintFrame()
 	m_filled = false;
 
 	unsigned char *data = (m_data == NULL) ? m_image->bits() : m_data;
-	printf("format=%x, h=%d, w=%d, data=%x\n", m_image->format(), m_image->height(), m_image->width(), data);
+//	printf("format=%x, h=%d, w=%d, data=%x\n", m_image->format(), m_image->height(), m_image->width(), data);
 
 
 	if (m_appWin->enhanceVideoFlag) {
