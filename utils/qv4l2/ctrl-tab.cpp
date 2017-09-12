@@ -217,7 +217,8 @@ void ApplicationWindow::finishGrid(QGridLayout *grid, unsigned which)
 	m_sigMapper->setMapping(cbox, which | CTRL_UPDATE_ON_CHANGE);
 	cbox->hide();
 
-	QCheckBox *enhbox = new QCheckBox("拉普拉斯视频增强", w);	/* Update on change */
+	//QCheckBox *enhbox = new QCheckBox("拉普拉斯视频增强", w);	/* Update on change */
+	QCheckBox *enhbox = new QCheckBox("图像去雾", w);	/* Update on change */
 	addWidget(grid, enhbox);
 	connect(enhbox, SIGNAL(stateChanged(int)), this, SLOT(enhanceVideo(int)));
 
