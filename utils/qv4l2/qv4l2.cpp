@@ -47,6 +47,7 @@ extern "C" {
 #include <QInputDialog>
 #include <QDesktopWidget>
 #include <QTextCodec>
+#include <QProcess>
 
 #include <assert.h>
 #include <sys/mman.h>
@@ -109,6 +110,7 @@ ApplicationWindow::ApplicationWindow() :
 	QTextCodec::setCodecForCStrings(codec);
 	QTextCodec::setCodecForTr(codec);
 #define ONE_SCREEN_TEST 0
+#if 1
 //	m_pattern = new PatternWin(this);
 //	m_pattern->showFullScreen();
 	QDesktopWidget *desktop = QApplication::desktop();
@@ -130,10 +132,43 @@ ApplicationWindow::ApplicationWindow() :
 		m_pattern[i]->screen_rect.setLeft(pos);
 		#endif
 		//m_pattern[i]->move(0, 0);
-		if (i != 0) m_pattern[i]->showFullScreen();
+		//if (i != 0) m_pattern[i]->showFullScreen();
 		pos += m_pattern[i]->screen_rect.width();
 		printf("pos=%d--------------\n", pos);
 	}
+#endif
+	
+	QProcess nitrogen, nitrogen2;
+	QStringList arguments;
+#if 0
+	arguments << "--force-setter=xinerama" << ".//modes//mode1.png" << "--set-scaled";
+
+	nitrogen.start("./nitrogen", arguments);
+
+	if (!nitrogen.waitForStarted()) {
+		qDebug("start nitrogen failed");
+		return ;
+	}
+
+	while (false == nitrogen.waitForFinished()) {
+		qDebug("finish nitrogen failed");
+		return;
+	}
+#endif
+#if 0
+	arguments << "--force-setter=xinerama" << ".//modes//mode1.png" << "--set-scaled" << "--head=1";
+	nitrogen2.start("./nitrogen", arguments);
+
+	if (!nitrogen2.waitForStarted()) {
+		qDebug("start nitrogen failed");
+		return ;
+	}
+
+	while (false == nitrogen2.waitForFinished()) {
+		qDebug("finish nitrogen failed");
+		return;
+	}
+#endif
 
 	for (unsigned b = 0; b < sizeof(m_clear); b++)
 		m_clear[b] = false;
@@ -372,6 +407,7 @@ ApplicationWindow::~ApplicationWindow()
 
 void ApplicationWindow::updateScreen()
 {
+	#if 1
 	QApplication::syncX();
 	QDesktopWidget *desktop = QApplication::desktop();
 	screen_count = desktop->screenCount();
@@ -387,9 +423,10 @@ void ApplicationWindow::updateScreen()
 		m_pattern[i]->move(pos, 0);
 		#endif
 		//m_pattern[i]->move(0, 0);
-		if (i != 0) m_pattern[i]->showFullScreen();
+		//if (i != 0) m_pattern[i]->showFullScreen();
 		pos += m_pattern[i]->screen_rect.width();
 	}
+	#endif
 
 }
 void ApplicationWindow::updateColorspace()

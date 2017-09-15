@@ -22,7 +22,7 @@ endif
 qv4l2_CPPFLAGS += $(ALSA_CFLAGS) -DGIT_VERSION="\"$(GIT_VERSION)\"" -I/opt/AMDAPP/include
 qv4l2_LDFLAGS += $(ALSA_LIBS) -pthread
 
-qv4l2_LDFLAGS += -lXrandr -lX11 -lm -lOpenCL -L/opt/AMDAPP/lib/x86_64/sdk
+qv4l2_LDFLAGS += -lXrandr -lX11 -lm #-lOpenCL -L/opt/AMDAPP/lib/x86_64/sdk
 qv4l2_LDFLAGS += -lopencv_core -lopencv_highgui -lopencv_imgproc #-lavutil -lavformat -lavcodec
 
 EXTRA_DIST = enterbutt.png exit.png fileopen.png qv4l2_24x24.png qv4l2_64x64.png qv4l2.png qv4l2.svg \
