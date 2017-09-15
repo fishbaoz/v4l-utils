@@ -294,9 +294,30 @@ void PatternForm::patOutput1Changed(int mode)
 
 void PatternForm::patOutput2Changed(int mode)
 {
+	QString numString;
+	numString.setNum(mode+1, 10);
+
 //	qDebug("pat output %d, %s", mode, qPrintable(m_patternOutput->currentText()));
-	if (m_appWin->screen_count == 3)
-		m_appWin->m_pattern[2]->updatePattern(mode+1);
+//	if (m_appWin->screen_count == 3)
+//		m_appWin->m_pattern[2]->updatePattern(mode+1);
+	QProcess nitrogen;
+	QStringList arguments;
+
+	printf("run nitrogen mode=%d\n", mode);
+	arguments << "--force-setter=xinerama" << "--set-scaled" << ".//modes//mode"+numString +".png" << "--head=2";
+	//arguments << "--force-setter=xinerama" << "--set-scaled" << ".//modes//modes1.png" << "--head=1";
+
+	nitrogen.start("./nitrogen", arguments);
+
+	if (!nitrogen.waitForStarted()) {
+		qDebug("start nitrogen failed");
+		return ;
+	}
+
+	while (false == nitrogen.waitForFinished()) {
+		qDebug("finish nitrogen failed");
+		return;
+	}
 }
 
 
@@ -338,6 +359,8 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	//if (m_appWin->screen_count == 3)
 	//	m_appWin->m_pattern[2]->updateScreen();
 	//patOutput1Changed(1);
+	int resetmode = mode1_comboBox->currentIndex();
+	patOutput1Changed(resetmode);
 }
 
 void PatternForm::resolutionOutput2Changed(int mode)
@@ -366,6 +389,9 @@ void PatternForm::resolutionOutput2Changed(int mode)
 	//m_appWin->m_pattern[2]->updateScreen();
 	//m_appWin->updateScreen();
 	//patOutput2Changed(1);
+	int resetmode = mode2_comboBox->currentIndex();
+	patOutput2Changed(resetmode);
+
 }
 
 void PatternForm::refreshOutput1Changed(int rate)
