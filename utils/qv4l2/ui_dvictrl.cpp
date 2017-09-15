@@ -361,6 +361,8 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	//patOutput1Changed(1);
 	int resetmode = mode1_comboBox->currentIndex();
 	patOutput1Changed(resetmode);
+	resetmode = mode2_comboBox->currentIndex();
+	patOutput2Changed(resetmode);
 }
 
 void PatternForm::resolutionOutput2Changed(int mode)
@@ -392,6 +394,8 @@ void PatternForm::resolutionOutput2Changed(int mode)
 	int resetmode = mode2_comboBox->currentIndex();
 	patOutput2Changed(resetmode);
 
+	resetmode = mode1_comboBox->currentIndex();
+	patOutput1Changed(resetmode);
 }
 
 void PatternForm::refreshOutput1Changed(int rate)

@@ -140,7 +140,7 @@ ApplicationWindow::ApplicationWindow() :
 	
 	QProcess nitrogen, nitrogen2;
 	QStringList arguments;
-#if 0
+#if 1
 	arguments << "--force-setter=xinerama" << ".//modes//mode1.png" << "--set-scaled";
 
 	nitrogen.start("./nitrogen", arguments);
