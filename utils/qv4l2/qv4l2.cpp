@@ -143,7 +143,7 @@ ApplicationWindow::ApplicationWindow() :
 #if 1
 	arguments << "--force-setter=xinerama" << ".//modes//mode1.png" << "--set-scaled";
 
-	nitrogen.start("./nitrogen", arguments);
+	nitrogen.start("nitrogen", arguments);
 
 	if (!nitrogen.waitForStarted()) {
 		qDebug("start nitrogen failed");

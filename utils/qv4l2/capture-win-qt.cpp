@@ -74,9 +74,12 @@ CaptureWinQt::CaptureWinQt(ApplicationWindow *aw) :
 	m_videoSurface = new QLabel(this);
 	#if _USE_OPENCL_
 	init_cl();
-	create_buffer(1280*720);
+	//create_buffer(1280*720);
+	//create_buffer(1280*1920);
+	create_buffer(900*1600);
 	#else
-	init_buffer(720, 1280);
+	//init_buffer(720, 1280);
+	init_buffer(768, 1024);
 	#endif
 	CaptureWin::buildWindow(m_videoSurface);
 }

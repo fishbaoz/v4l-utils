@@ -279,7 +279,7 @@ void PatternForm::patOutput1Changed(int mode)
 	arguments << "--force-setter=xinerama" << "--set-scaled" << ".//modes//mode"+numString +".png" << "--head=1";
 	//arguments << "--force-setter=xinerama" << "--set-scaled" << ".//modes//modes1.png" << "--head=1";
 
-	nitrogen.start("./nitrogen", arguments);
+	nitrogen.start("nitrogen", arguments);
 
 	if (!nitrogen.waitForStarted()) {
 		qDebug("start nitrogen failed");
@@ -307,7 +307,7 @@ void PatternForm::patOutput2Changed(int mode)
 	arguments << "--force-setter=xinerama" << "--set-scaled" << ".//modes//mode"+numString +".png" << "--head=2";
 	//arguments << "--force-setter=xinerama" << "--set-scaled" << ".//modes//modes1.png" << "--head=1";
 
-	nitrogen.start("./nitrogen", arguments);
+	nitrogen.start("nitrogen", arguments);
 
 	if (!nitrogen.waitForStarted()) {
 		qDebug("start nitrogen failed");
@@ -333,27 +333,45 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[1]->mode_name, "--mode", dest_mode, NULL};
   	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution1_comboBox->currentText()));
-	xrandr(7, argv, NULL, NULL);
+	//xrandr(7, argv, NULL, NULL);
+	QProcess xrandr;
+	QStringList arguments;
+
+	arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[1]->mode_name << "--mode" << dest_mode;
+	xrandr.start("xrandr", arguments);
+
+	if (!xrandr.waitForStarted()) {
+		qDebug("start xrandr failed");
+		return;
+	}
+	while (false == xrandr.waitForFinished()) {
+		qDebug("finished xrandr failed");
+		return;
+	}
+	//char *argv2[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[2]->mode_name, "--mode", dest_mode, NULL};
+  	//printf("sizeof argv=%d\n", sizeof(argv));
+	//strcpy(dest_mode, qPrintable(resolution2_comboBox->currentText()));
+	//xrandr(7, argv, NULL, NULL);
 	//xrandr(7, argv, NULL);
 //	m_appWin->m_pattern[1]->updateScreen();
-	m_appWin->m_pattern[1]->screen_rect.setWidth(getw(dest_mode));
-	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
-	m_appWin->m_pattern[1]->screen_rect.setHeight(geth(dest_mode));
-	printf("width1.2=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
-	if (m_appWin->screen_count >= 2)
-		m_appWin->m_pattern[1]->screen_rect.setLeft(
-			m_appWin->m_pattern[0]->screen_rect.width()
-		);
+//	m_appWin->m_pattern[1]->screen_rect.setWidth(getw(dest_mode));
+//	printf("width1=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+//	m_appWin->m_pattern[1]->screen_rect.setHeight(geth(dest_mode));
+//	printf("width1.2=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+//	if (m_appWin->screen_count >= 2)
+//		m_appWin->m_pattern[1]->screen_rect.setLeft(
+//			m_appWin->m_pattern[0]->screen_rect.width()
+//		);
 	
-	printf("width1.3=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
-	if (m_appWin->screen_count == 3) {
-		m_appWin->m_pattern[2]->screen_rect.setLeft(
-			m_appWin->m_pattern[0]->screen_rect.width() +
-			m_appWin->m_pattern[1]->screen_rect.width()
-		);
-	}
-	printf("width1.4=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
-	printf("1 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
+//	printf("width1.3=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+//	if (m_appWin->screen_count == 3) {
+//		m_appWin->m_pattern[2]->screen_rect.setLeft(
+//			m_appWin->m_pattern[0]->screen_rect.width() +
+//			m_appWin->m_pattern[1]->screen_rect.width()
+//		);
+//	}
+//	printf("width1.4=%d\n", m_appWin->m_pattern[1]->screen_rect.width());
+//	printf("1 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
 	
 	//m_appWin->m_pattern[1]->updateScreen();
 	//if (m_appWin->screen_count == 3)
@@ -368,22 +386,39 @@ void PatternForm::resolutionOutput1Changed(int mode)
 void PatternForm::resolutionOutput2Changed(int mode)
 {
 	qDebug("resolution=%s\n", qPrintable(resolution2_comboBox->currentText()));
-	char dest_mode[10]="1920x1080";
+	char dest_mode[10]="1024x768";
 	//char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
 	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[2]->mode_name, "--mode", dest_mode, NULL};
-  	printf("sizeof argv=%d\n", sizeof(argv));
+  	//printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution2_comboBox->currentText()));
-	xrandr(7, argv, NULL, NULL);
-	m_appWin->m_pattern[2]->screen_rect.setWidth(getw(dest_mode));
-	m_appWin->m_pattern[2]->screen_rect.setHeight(geth(dest_mode));
-	m_appWin->m_pattern[1]->screen_rect.setLeft(
-		m_appWin->m_pattern[0]->screen_rect.width()
-	);
-	m_appWin->m_pattern[2]->screen_rect.setLeft(
-		m_appWin->m_pattern[0]->screen_rect.width() +
-		m_appWin->m_pattern[1]->screen_rect.width()
-	);
-	printf("2 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
+	//xrandr(7, argv, NULL, NULL);
+	//char *argv1[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[1]->mode_name, "--mode", dest_mode, NULL};
+	//strcpy(dest_mode, qPrintable(resolution1_comboBox->currentText()));
+//	xrandr(7, argv, NULL, NULL);
+	QProcess xrandr;
+	QStringList arguments;
+
+	arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[2]->mode_name << "--mode" << dest_mode;
+	xrandr.start("xrandr", arguments);
+
+	if (!xrandr.waitForStarted()) {
+		qDebug("start xrandr failed");
+		return;
+	}
+	while (false == xrandr.waitForFinished()) {
+		qDebug("finished xrandr failed");
+		return;
+	}
+//	m_appWin->m_pattern[2]->screen_rect.setWidth(getw(dest_mode));
+//	m_appWin->m_pattern[2]->screen_rect.setHeight(geth(dest_mode));
+//	m_appWin->m_pattern[1]->screen_rect.setLeft(
+//		m_appWin->m_pattern[0]->screen_rect.width()
+//	);
+//	m_appWin->m_pattern[2]->screen_rect.setLeft(
+//		m_appWin->m_pattern[0]->screen_rect.width() +
+//		m_appWin->m_pattern[1]->screen_rect.width()
+//	);
+//	printf("2 set2Lefti=%d+%d\n", m_appWin->m_pattern[0]->screen_rect.width(), m_appWin->m_pattern[1]->screen_rect.width());
 	
 	//m_appWin->m_pattern[1]->updateScreen();
 	//if (m_appWin->screen_count >= 2)
