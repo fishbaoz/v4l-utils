@@ -250,11 +250,13 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	refreshrate1_comboBox->addItem("50");
 	refreshrate1_comboBox->addItem("60");
 	refreshrate1_comboBox->addItem("70");
+	refreshrate1_comboBox->setCurrentIndex(1);
 	connect(refreshrate1_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput1Changed(int)));
 
 	refreshrate2_comboBox->addItem("50");
 	refreshrate2_comboBox->addItem("60");
 	refreshrate2_comboBox->addItem("70");
+	refreshrate2_comboBox->setCurrentIndex(1);
 	connect(refreshrate2_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput2Changed(int)));
 	//for (;;);
 }
@@ -442,8 +444,23 @@ void PatternForm::refreshOutput1Changed(int rate)
   	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution1_comboBox->currentText()));
 	strcpy(dest_rate, qPrintable(refreshrate1_comboBox->currentText()));
-	if (m_appWin->screen_count >= 2)
-		xrandr(9, argv, NULL, NULL);
+	if (m_appWin->screen_count >= 2) {
+		//xrandr(9, argv, NULL, NULL);
+		QProcess xrandr;
+		QStringList arguments;
+
+		arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[1]->mode_name << "--mode" << dest_mode << "--rate" << dest_rate;
+		xrandr.start("xrandr", arguments);
+
+		if (!xrandr.waitForStarted()) {
+			qDebug("start xrandr failed");
+			return;
+		}
+		while (false == xrandr.waitForFinished()) {
+			qDebug("finished xrandr failed");
+			return;
+		}
+	}
 }
 
 void PatternForm::refreshOutput2Changed(int rate)
@@ -455,6 +472,21 @@ void PatternForm::refreshOutput2Changed(int rate)
   	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution2_comboBox->currentText()));
 	strcpy(dest_rate, qPrintable(refreshrate2_comboBox->currentText()));
-	if (m_appWin->screen_count == 3)
-		xrandr(9, argv, NULL, NULL);
+	if (m_appWin->screen_count == 3) {
+		//xrandr(9, argv, NULL, NULL);
+		QProcess xrandr;
+		QStringList arguments;
+
+		arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[2]->mode_name << "--mode" << dest_mode << "--rate" << dest_rate;
+		xrandr.start("xrandr", arguments);
+
+		if (!xrandr.waitForStarted()) {
+			qDebug("start xrandr failed");
+			return;
+		}
+		while (false == xrandr.waitForFinished()) {
+			qDebug("finished xrandr failed");
+			return;
+		}
+	}
 }
