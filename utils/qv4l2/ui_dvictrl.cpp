@@ -330,16 +330,20 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	qDebug("resolution=%s\n", qPrintable(resolution1_comboBox->currentText()));
 	char mode_name[32]="DFP4";
 	char dest_mode[10]="1920x1080";
+	char dest_mode2[10]="1920x1080";
 	//char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
 	//char *argv[]={"xrandr", "-d", ":0", "--output", "DFP4", "--mode", dest_mode, NULL};
 	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[1]->mode_name, "--mode", dest_mode, NULL};
   	printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution1_comboBox->currentText()));
+	if (m_appWin->screen_count == 3)
+		strcpy(dest_mode2, qPrintable(resolution2_comboBox->currentText()));
 	//xrandr(7, argv, NULL, NULL);
 	QProcess xrandr;
 	QStringList arguments;
 
-	arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[1]->mode_name << "--mode" << dest_mode;
+	//if (m_appWin->screen_count == 3)
+	arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[1]->mode_name << "--mode" << dest_mode  << "--output" << m_appWin->m_pattern[2]->mode_name << "--mode" << dest_mode2;
 	xrandr.start("xrandr", arguments);
 
 	if (!xrandr.waitForStarted()) {
@@ -389,10 +393,12 @@ void PatternForm::resolutionOutput2Changed(int mode)
 {
 	qDebug("resolution=%s\n", qPrintable(resolution2_comboBox->currentText()));
 	char dest_mode[10]="1024x768";
+	char dest_mode1[10]="1024x768";
 	//char *argv[]={"xrandr", "-d", ":0", "--output", "DisplayPort-0", "--mode", dest_mode, NULL};
 	char *argv[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[2]->mode_name, "--mode", dest_mode, NULL};
   	//printf("sizeof argv=%d\n", sizeof(argv));
 	strcpy(dest_mode, qPrintable(resolution2_comboBox->currentText()));
+	strcpy(dest_mode1, qPrintable(resolution1_comboBox->currentText()));
 	//xrandr(7, argv, NULL, NULL);
 	//char *argv1[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[1]->mode_name, "--mode", dest_mode, NULL};
 	//strcpy(dest_mode, qPrintable(resolution1_comboBox->currentText()));
@@ -400,7 +406,7 @@ void PatternForm::resolutionOutput2Changed(int mode)
 	QProcess xrandr;
 	QStringList arguments;
 
-	arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[2]->mode_name << "--mode" << dest_mode;
+	arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[2]->mode_name << "--mode" << dest_mode << "--output" << m_appWin->m_pattern[1]->mode_name << "--mode" << dest_mode1;
 	xrandr.start("xrandr", arguments);
 
 	if (!xrandr.waitForStarted()) {
