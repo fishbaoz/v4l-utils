@@ -2233,7 +2233,7 @@ find_provider (name_t *name)
 }
 #ifdef QT_SHARED
 int
-xrandr(int argc, char **argv, char ret_modes[][32][256], char ret_modenames[][32])
+xrandr(int argc, char **argv, char ret_modes[][32][256], char ret_modenames[][32], int ret_refresh[][32][8])
 #else
 int
 main (int argc, char **argv)
@@ -3349,19 +3349,21 @@ main (int argc, char **argv)
 					printf (" ");
 					printf (" name %-12s", jmode->name);
 					#ifdef QT_SHARED
-					if (ret_modes) strcpy(ret_modes[output_num][num_retmodes++], jmode->name);
+					if (ret_modes) strcpy(ret_modes[output_num][num_retmodes], jmode->name);
 					#else
-					num_retmodes ++;
+					num_retmodes;
 					#endif
-					printf("num_retmodes=%d\n", num_retmodes);
-					for (k = j; k < output_info->nmode; k++)
+					//printf("num_retmodes=%d\n", num_retmodes);
+					int refresh_num;
+					for (k = j, refresh_num = 0; k < output_info->nmode; k++)
 					{
 						if (mode_shown[k]) continue;
 						kmode = find_mode_by_xid (output_info->modes[k]);
 						if (strcmp (jmode->name, kmode->name) != 0) continue;
 						mode_shown[k] = True;
 						kmode->modeFlags |= ModeShown;
-						printf (" %6.2f", mode_refresh (kmode));
+						//printf (" %6.2f, %d, %d", mode_refresh (kmode), k, j);
+						ret_refresh[output_num][num_retmodes][refresh_num] = round(mode_refresh (kmode));
 						if (kmode == output->mode_info)
 							printf ("*");
 						else
@@ -3371,6 +3373,8 @@ main (int argc, char **argv)
 						else
 							printf (" ");
 					}
+					num_retmodes ++;
+					printf("num_retmodes=%d\n", num_retmodes);
 					printf ("\n");
 				}
 				free (mode_shown);

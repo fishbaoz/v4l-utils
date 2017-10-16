@@ -55,7 +55,7 @@ bool compare_widthxheight(char *r1, char *r2)
 	else
 		return false;
 }
-void sort_xrandr(char xrandr[32][256])
+void sort_xrandr(char xrandr[32][256], int refresh[32][8])
 {
 	int i, j, num;
 	char temp[32];
@@ -71,11 +71,15 @@ void sort_xrandr(char xrandr[32][256])
 				strcpy(temp, xrandr[i]);
 				strcpy(xrandr[i], xrandr[j]);
 				strcpy(xrandr[j], temp);
+				memcpy(temp, refresh[i], 8);
+				memcpy(refresh[i], refresh[j], 8);
+				memcpy(refresh[j], temp, 8);
 			}
 		}
 	}
 }
 
+static int refresh[3][32][8]={0};
 
 PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	m_appWin(aw)
@@ -220,23 +224,44 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	char modes_name[3][32]={0};
 	memset(modes_table, 0, /* sizeof(modes_table)*/3*32*256   );
 	printf("sizeof argv=%d\n", sizeof(argv));
-	xrandr(3, argv, modes_table, modes_name);
-	sort_xrandr(modes_table[1]);
+//	int ii, jj, kk;
+//	for (ii=0; ii<3; ii++)
+//		for (jj=0; jj<32; jj++)
+//			for (kk=0; kk<8; kk++)
+//				printf("%d, %d, refresh=%d\n", ii, jj, refresh[ii][jj][kk]);
+
+	xrandr(3, argv, modes_table, modes_name, refresh);
+//	for (ii=0; ii<3; ii++)
+//		for (jj=0; jj<32; jj++)
+//			for (kk=0; kk<8; kk++)
+//				printf("%d, %d, refresh=%d\n", ii, jj, refresh[ii][jj][kk]);
+
+	#if 0 			/* TODO: 0 */
+	memcpy (&(modes_table[1][0][0]), &(modes_table[0][0][0]), 32*256);
+	memcpy (&(refresh[1][0][0]), &(refresh[0][0][0]), 32*8*4);
+	#endif
+	//sort_xrandr(modes_table[1], refresh[1]);
 	char *mode= &(modes_table[1][0][0]);
-	
+
 	printf("names=%s,%s, %s\n", modes_name[0], modes_name[1], modes_name[2]);
 	if (modes_name[1][0])
 		strcpy(m_appWin->m_pattern[1]->mode_name, modes_name[1]);
+	int i;
+	i = 0;
 	while (mode[0]) {
 		printf("mode=%s\n", &mode[0]);
-			resolution1_comboBox->addItem((char *)(&mode[0]));
+//		printf("refresh=%d\n", refresh[1][i][0]);
+		resolution1_comboBox->addItem((char *)(&mode[0]));
 		mode += 256;
+		i ++;
 	}
+
+//	resolution1_comboBox->addItem("1920x1080"); // add for screen capture.
 	connect(resolution1_comboBox, SIGNAL(activated(int)), SLOT(resolutionOutput1Changed(int)));
 
 		//for (;;);
 	mode = &(modes_table[2][0][0]);
-	sort_xrandr(modes_table[2]);
+	sort_xrandr(modes_table[2], refresh[2]);
 	if (modes_name[2][0])
 		strcpy(m_appWin->m_pattern[2]->mode_name, modes_name[2]);
 	while (mode[0]) {
@@ -247,16 +272,30 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	connect(resolution2_comboBox, SIGNAL(activated(int)), SLOT(resolutionOutput2Changed(int)));
 
 	//for (;;);
-	refreshrate1_comboBox->addItem("50");
-	refreshrate1_comboBox->addItem("60");
-	refreshrate1_comboBox->addItem("70");
-	refreshrate1_comboBox->setCurrentIndex(1);
+	int index_refresh = 0;
+	char refresh_str[3];
+	while (refresh[1][0][index_refresh]) {
+		//refreshrate1_comboBox->addItem("50");
+		//refreshrate1_comboBox->addItem("60");
+		//refreshrate1_comboBox->addItem("70");
+		printf("refresh=%d\n", refresh[1][0][index_refresh]);
+		sprintf(refresh_str, "%d", refresh[1][0][index_refresh]);
+		refreshrate1_comboBox->addItem(refresh_str);
+		index_refresh ++;
+	}
+//	refreshrate1_comboBox->setCurrentIndex(1);
 	connect(refreshrate1_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput1Changed(int)));
 
-	refreshrate2_comboBox->addItem("50");
-	refreshrate2_comboBox->addItem("60");
-	refreshrate2_comboBox->addItem("70");
-	refreshrate2_comboBox->setCurrentIndex(1);
+	while (refresh[2][0][index_refresh]) {
+		//refreshrate2_comboBox->addItem("50");
+		//refreshrate2_comboBox->addItem("60");
+		//refreshrate2_comboBox->addItem("70");
+		//refreshrate2_comboBox->setCurrentIndex(1);
+		sprintf(refresh_str, "%d", refresh[2][0][index_refresh]);
+		refreshrate1_comboBox->addItem(refresh_str);
+		index_refresh ++;
+	}
+
 	connect(refreshrate2_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput2Changed(int)));
 	//for (;;);
 }
@@ -343,6 +382,7 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	QStringList arguments;
 
 	//if (m_appWin->screen_count == 3)
+	#if 1
 	arguments << "-d" << ":0" << "--output" << m_appWin->m_pattern[1]->mode_name << "--mode" << dest_mode  << "--output" << m_appWin->m_pattern[2]->mode_name << "--mode" << dest_mode2;
 	xrandr.start("xrandr", arguments);
 
@@ -354,6 +394,7 @@ void PatternForm::resolutionOutput1Changed(int mode)
 		qDebug("finished xrandr failed");
 		return;
 	}
+	#endif
 	//char *argv2[]={"xrandr", "-d", ":0", "--output", m_appWin->m_pattern[2]->mode_name, "--mode", dest_mode, NULL};
   	//printf("sizeof argv=%d\n", sizeof(argv));
 	//strcpy(dest_mode, qPrintable(resolution2_comboBox->currentText()));
@@ -387,6 +428,21 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	patOutput1Changed(resetmode);
 	resetmode = mode2_comboBox->currentIndex();
 	patOutput2Changed(resetmode);
+
+	int res = resolution1_comboBox->currentIndex();
+	int ref_index;
+	char refresh_str[8];
+	ref_index = 0;
+	while (refresh[1][res][ref_index]) {
+		printf("res=%d, refresh=%d\n", res, refresh[1][res][ref_index]);
+		sprintf(refresh_str, "%d", refresh[1][res][ref_index]);
+		refreshrate1_comboBox->removeItem(2);
+		refreshrate1_comboBox->removeItem(1);
+		refreshrate1_comboBox->removeItem(0);
+		refreshrate1_comboBox->addItem(refresh_str);
+		ref_index++;
+	}
+	//refreshrate1_comboBox;
 }
 
 void PatternForm::resolutionOutput2Changed(int mode)
@@ -439,6 +495,21 @@ void PatternForm::resolutionOutput2Changed(int mode)
 
 	resetmode = mode1_comboBox->currentIndex();
 	patOutput1Changed(resetmode);
+
+	int res = resolution2_comboBox->currentIndex();
+	int ref_index;
+	char refresh_str[8];
+	ref_index = 0;
+	while (refresh[2][res][ref_index]) {
+		printf("res=%d, refresh=%d\n", res, refresh[2][res][ref_index]);
+		sprintf(refresh_str, "%d", refresh[2][res][ref_index]);
+		refreshrate2_comboBox->removeItem(2);
+		refreshrate2_comboBox->removeItem(1);
+		refreshrate2_comboBox->removeItem(0);
+		refreshrate2_comboBox->addItem(refresh_str);
+		ref_index++;
+	}
+
 }
 
 void PatternForm::refreshOutput1Changed(int rate)
