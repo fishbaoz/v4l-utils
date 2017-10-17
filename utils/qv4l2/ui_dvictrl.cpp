@@ -286,6 +286,7 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 //	refreshrate1_comboBox->setCurrentIndex(1);
 	connect(refreshrate1_comboBox, SIGNAL(activated(int)), SLOT(refreshOutput1Changed(int)));
 
+	index_refresh = 0;
 	while (refresh[2][0][index_refresh]) {
 		//refreshrate2_comboBox->addItem("50");
 		//refreshrate2_comboBox->addItem("60");
