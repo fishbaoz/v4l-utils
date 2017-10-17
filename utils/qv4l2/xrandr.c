@@ -3363,7 +3363,7 @@ main (int argc, char **argv)
 						mode_shown[k] = True;
 						kmode->modeFlags |= ModeShown;
 						//printf (" %6.2f, %d, %d", mode_refresh (kmode), k, j);
-						ret_refresh[output_num][num_retmodes][refresh_num] = round(mode_refresh (kmode));
+						ret_refresh[output_num][num_retmodes][refresh_num++] = round(mode_refresh (kmode));
 						if (kmode == output->mode_info)
 							printf ("*");
 						else

@@ -71,9 +71,9 @@ void sort_xrandr(char xrandr[32][256], int refresh[32][8])
 				strcpy(temp, xrandr[i]);
 				strcpy(xrandr[i], xrandr[j]);
 				strcpy(xrandr[j], temp);
-				memcpy(temp, refresh[i], 8);
-				memcpy(refresh[i], refresh[j], 8);
-				memcpy(refresh[j], temp, 8);
+				memcpy(temp, refresh[i], 8*4);
+				memcpy(refresh[i], refresh[j], 8*4);
+				memcpy(refresh[j], temp, 8*4);
 			}
 		}
 	}
@@ -224,23 +224,23 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 	char modes_name[3][32]={0};
 	memset(modes_table, 0, /* sizeof(modes_table)*/3*32*256   );
 	printf("sizeof argv=%d\n", sizeof(argv));
-//	int ii, jj, kk;
+	int ii, jj, kk;
 //	for (ii=0; ii<3; ii++)
 //		for (jj=0; jj<32; jj++)
 //			for (kk=0; kk<8; kk++)
 //				printf("%d, %d, refresh=%d\n", ii, jj, refresh[ii][jj][kk]);
 
 	xrandr(3, argv, modes_table, modes_name, refresh);
-//	for (ii=0; ii<3; ii++)
-//		for (jj=0; jj<32; jj++)
-//			for (kk=0; kk<8; kk++)
-//				printf("%d, %d, refresh=%d\n", ii, jj, refresh[ii][jj][kk]);
+	for (ii=0; ii<3; ii++)
+		for (jj=0; jj<32; jj++)
+			for (kk=0; kk<8; kk++)
+				printf("%d, %d, refresh=%d\n", ii, jj, refresh[ii][jj][kk]);
 
 	#if 0 			/* TODO: 0 */
 	memcpy (&(modes_table[1][0][0]), &(modes_table[0][0][0]), 32*256);
 	memcpy (&(refresh[1][0][0]), &(refresh[0][0][0]), 32*8*4);
 	#endif
-	//sort_xrandr(modes_table[1], refresh[1]);
+	sort_xrandr(modes_table[1], refresh[1]);
 	char *mode= &(modes_table[1][0][0]);
 
 	printf("names=%s,%s, %s\n", modes_name[0], modes_name[1], modes_name[2]);
@@ -292,7 +292,7 @@ PatternForm::PatternForm(QWidget *parent, ApplicationWindow *aw) :
 		//refreshrate2_comboBox->addItem("70");
 		//refreshrate2_comboBox->setCurrentIndex(1);
 		sprintf(refresh_str, "%d", refresh[2][0][index_refresh]);
-		refreshrate1_comboBox->addItem(refresh_str);
+		refreshrate2_comboBox->addItem(refresh_str);
 		index_refresh ++;
 	}
 
@@ -433,12 +433,15 @@ void PatternForm::resolutionOutput1Changed(int mode)
 	int ref_index;
 	char refresh_str[8];
 	ref_index = 0;
+	refreshrate1_comboBox->removeItem(5);
+	refreshrate1_comboBox->removeItem(4);
+	refreshrate1_comboBox->removeItem(3);
+	refreshrate1_comboBox->removeItem(2);
+	refreshrate1_comboBox->removeItem(1);
+	refreshrate1_comboBox->removeItem(0);
 	while (refresh[1][res][ref_index]) {
 		printf("res=%d, refresh=%d\n", res, refresh[1][res][ref_index]);
 		sprintf(refresh_str, "%d", refresh[1][res][ref_index]);
-		refreshrate1_comboBox->removeItem(2);
-		refreshrate1_comboBox->removeItem(1);
-		refreshrate1_comboBox->removeItem(0);
 		refreshrate1_comboBox->addItem(refresh_str);
 		ref_index++;
 	}
@@ -500,12 +503,16 @@ void PatternForm::resolutionOutput2Changed(int mode)
 	int ref_index;
 	char refresh_str[8];
 	ref_index = 0;
+	refreshrate2_comboBox->removeItem(6);
+	refreshrate2_comboBox->removeItem(5);
+	refreshrate2_comboBox->removeItem(4);
+	refreshrate2_comboBox->removeItem(3);
+	refreshrate2_comboBox->removeItem(2);
+	refreshrate2_comboBox->removeItem(1);
+	refreshrate2_comboBox->removeItem(0);
 	while (refresh[2][res][ref_index]) {
 		printf("res=%d, refresh=%d\n", res, refresh[2][res][ref_index]);
 		sprintf(refresh_str, "%d", refresh[2][res][ref_index]);
-		refreshrate2_comboBox->removeItem(2);
-		refreshrate2_comboBox->removeItem(1);
-		refreshrate2_comboBox->removeItem(0);
 		refreshrate2_comboBox->addItem(refresh_str);
 		ref_index++;
 	}
